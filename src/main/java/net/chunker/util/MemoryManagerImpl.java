@@ -36,7 +36,7 @@ public class MemoryManagerImpl implements MemoryManager {
 	}
 	
 	/**
-	 * @see org.chunker.util.MemoryManager#gcIfNecessary()
+	 * @see net.chunker.util.MemoryManager#gcIfNecessary()
 	 */
 	@Override
 	public void gcIfNecessary() {
@@ -48,24 +48,30 @@ public class MemoryManagerImpl implements MemoryManager {
 				synchronized(rt) {
 					// double check locking, b/c it's good enough
 					if (isMemoryUsageHigh(rt) && this.gcCount >= 0) {
-						this.gcCount++;
-						rt.gc();
-						rt.runFinalization();
-						rt.gc();
-						
-						LOG.trace("After ChunkTransformer called gc()\tUsed:\t{}\tMax:\t{}", 
-								formatLong(rt.totalMemory()-rt.freeMemory()),  
-								formatLong(this.maxMemory));
-
-						
-						// if that does not cause the memory to get released,
-						// then don't bother doing it again
-						if (isMemoryUsageHigh(rt)) {
-							this.gcCount = -this.gcCount;
-						}
+						gc();
 					}													
 				}						 
 			}
+		}
+	}
+
+	private void gc() {
+		this.gcCount++;
+		rt.gc();
+		rt.runFinalization();
+		rt.gc();
+		
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("After ChunkTransformer called gc()\tUsed:\t{}\tMax:\t{}", 
+					formatLong(rt.totalMemory()-rt.freeMemory()),  
+					formatLong(this.maxMemory));
+		}
+
+		
+		// if that does not cause the memory to get released,
+		// then don't bother doing it again
+		if (isMemoryUsageHigh(rt)) {
+			this.gcCount = -this.gcCount;
 		}
 	}
 	
@@ -73,18 +79,22 @@ public class MemoryManagerImpl implements MemoryManager {
         String s = Long.toString(Math.abs(l));
         final int sLength = s.length();
         
-        StringBuffer sb = new StringBuffer(sLength+(sLength/3)+(l<0 ? 1 : 0));
+        StringBuilder sb = new StringBuilder(sLength+(sLength/3)+(l<0 ? 1 : 0));
         
         sb.append(s);
         
         if (sLength > 3) {
             int start =  sLength % 3;
-            if(start == 0) start = 3;
+            if(start == 0) {
+            	start = 3;
+            }
             for (int i = start; i <= s.length(); i += 4) {
                 sb.insert(i, ',');
             }
         }
-        if (l<0) sb.insert(0, '-');
+        if (l<0) {
+        	sb.insert(0, '-');
+        }
         return sb.toString();
     }
 }

@@ -9,8 +9,10 @@ import net.chunker.json.api.JsonEvent;
  */
 public final class NamedEventFactory {
 	
-	private volatile static NamedEventFactory instance;
+	private static volatile NamedEventFactory instance;
 
+	private NamedEventFactory() {}
+	
     public static NamedEventFactory namedEventFactory() {
         if (instance == null) {
             synchronized (NamedEventFactory.class) {
@@ -21,30 +23,27 @@ public final class NamedEventFactory {
         }
         return instance;
     }
-	
-	private NamedEventFactory() {}
 
 	/**
 	 * All events are handled accept KEY_NAME, b/c that is where the currentName comes from
-	 * @param jsonEvent
-	 * @param currentName Nullable
-	 * @return
+	 * @param jsonEvent Any event accept KEY_NAME
+	 * @param currentName Nullable, b/c arrays contain unnamed values
+	 * @return NamedEvent
 	 */
 	public NamedEvent create(JsonEvent jsonEvent, String currentName) {
 		Event event = jsonEvent.getEvent();
 		switch (event) {
 			case START_ARRAY:
 				return new NamedStartArrayEvent(currentName);
-			case END_ARRAY:
-				return new NamedEndArrayEvent();
 			case START_OBJECT:					
 				return new NamedStartObjectEvent(currentName);
+			case END_ARRAY:	
 			case END_OBJECT:
-				return new NamedEndObjectEvent();
+				return new NamedEndEvent();
 			case VALUE_FALSE:
-				return new NamedFalseEvent(currentName);
+				return new NamedBooleanEvent(currentName, false);
 			case VALUE_TRUE:
-				return new NamedTrueEvent(currentName);
+				return new NamedBooleanEvent(currentName, true);
 			case VALUE_NULL:
 				return new NamedNullEvent(currentName);
 			case VALUE_NUMBER:

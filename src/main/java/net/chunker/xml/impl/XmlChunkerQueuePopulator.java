@@ -1,5 +1,7 @@
 package net.chunker.xml.impl;
 
+import static net.chunker.util.Validations.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,59 +18,6 @@ import org.xml.sax.SAXException;
  * @author rollsroyas@alumni.ncsu.edu
  */
 public class XmlChunkerQueuePopulator {
-	
-	public static final class Builder {
-		private InputStream inputStream;
-		private SAXParser saxParser;
-		private XmlChunker chunker;
-		
-		private Builder() {}
-		
-		/**
-		 * Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
-		 */
-		public Builder inputStream(InputStream inputStream) {
-			this.inputStream = inputStream;
-			return this;
-		}
-		public Builder saxParser(SAXParser saxParser) {
-			this.saxParser = saxParser;
-			return this;
-		}
-		public Builder chunker(XmlChunker chunker) {
-			this.chunker = chunker;
-			return this;
-		}
-		private void defaultSaxParserIfNull() {
-			if (this.saxParser == null) {
-				// Use the default (non-validating) parser
-				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-				saxFactory.setNamespaceAware(true);	
-				try {
-					this.saxParser = saxFactory.newSAXParser();
-				} catch (ParserConfigurationException | SAXException e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}
-		
-		public void validate() {
-			if (inputStream == null) throw new NullPointerException("inputStream cannot be null");
-			if (chunker == null) throw new NullPointerException("chunker cannot be null");
-		}
-		
-		public XmlChunkerQueuePopulator build() {
-			validate();
-			defaultSaxParserIfNull();
-			return new XmlChunkerQueuePopulator(chunker, saxParser, inputStream);
-		}
-	}
-	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	//private static Logger LOG = LoggerFactory.getLogger(XmlChunkerQueuePopulator.class);
 
 	private final InputStream inputStream;
 	private final SAXParser saxParser;
@@ -103,5 +52,58 @@ public class XmlChunkerQueuePopulator {
 				}
 			}
 		};
+	}
+	
+	public static final class Builder {
+		private InputStream inputStream;
+		private SAXParser saxParser;
+		private XmlChunker chunker;
+		
+		private Builder() {}
+		
+		/**
+		 * Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
+		 * @param inputStream Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
+		 * @return this Builder so that one can chain the calls
+		 */
+		public Builder inputStream(InputStream inputStream) {
+			this.inputStream = inputStream;
+			return this;
+		}
+		public Builder saxParser(SAXParser saxParser) {
+			this.saxParser = saxParser;
+			return this;
+		}
+		public Builder chunker(XmlChunker chunker) {
+			this.chunker = chunker;
+			return this;
+		}
+		private void defaultSaxParserIfNull() {
+			if (this.saxParser == null) {
+				// Use the default (non-validating) parser
+				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+				saxFactory.setNamespaceAware(true);	
+				try {
+					this.saxParser = saxFactory.newSAXParser();
+				} catch (ParserConfigurationException | SAXException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+		}
+		
+		public void validate() {
+			checkNotNull(inputStream, "inputStream cannot be null");
+			checkNotNull(chunker, "chunker cannot be null");
+		}
+		
+		public XmlChunkerQueuePopulator build() {
+			validate();
+			defaultSaxParserIfNull();
+			return new XmlChunkerQueuePopulator(chunker, saxParser, inputStream);
+		}
+	}
+	
+	public static Builder builder() {
+		return new Builder();
 	}
 }

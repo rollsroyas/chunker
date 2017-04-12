@@ -1,5 +1,9 @@
 package net.chunker.json.impl;
 
+import static net.chunker.util.Validations.checkNotBothNull;
+import static net.chunker.util.Validations.checkNotBothPresent;
+import static net.chunker.util.Validations.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -12,52 +16,6 @@ import net.chunker.json.api.JsonChunker;
  * @author rollsroyas@alumni.ncsu.edu
  */
 public class JsonChunkerQueuePopulator {
-	
-	public static final class Builder {
-		private InputStream inputStream;
-		private JsonParser parser;
-		private JsonChunker chunker;
-		
-		private Builder() {}
-		
-		/**
-		 * Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
-		 */
-		public Builder inputStream(InputStream inputStream) {
-			this.inputStream = inputStream;
-			return this;
-		}
-		public Builder parser(JsonParser parser) {
-			this.parser = parser;
-			return this;
-		}
-		public Builder chunker(JsonChunker chunker) {
-			this.chunker = chunker;
-			return this;
-		}
-		private void defaultParserIfNull() {
-			if (this.parser == null) {
-				// Use the default (non-validating) parser
-				this.parser = Json.createParser(inputStream);
-			}
-		}
-		
-		public void validate() {
-			if (this.inputStream == null && this.parser == null) throw new NullPointerException("inputStream and parser cannot both be null");
-			if (this.inputStream != null && this.parser != null) throw new IllegalStateException("inputStream and parser cannot both be present");
-			if (this.chunker == null) throw new NullPointerException("chunker cannot be null");
-		}
-		
-		public JsonChunkerQueuePopulator build() {
-			validate();
-			defaultParserIfNull();
-			return new JsonChunkerQueuePopulator(parser, chunker);
-		}
-	}
-	
-	public static Builder builder() {
-		return new Builder();
-	}
 
 	private final JsonParser parser;
 	private final JsonChunker chunker;
@@ -80,9 +38,9 @@ public class JsonChunkerQueuePopulator {
 			@Override
 			public void run() {
 				try {
-					try (JsonParser parser = JsonChunkerQueuePopulator.this.parser) {
-						while (parser.hasNext()) {						
-							chunker.handleEvent(new JsonEventImpl(parser));					
+					try (JsonParser jsonParser = parser) {
+						while (jsonParser.hasNext()) {						
+							chunker.handleEvent(new JsonEventImpl(jsonParser));					
 						}
 					}
 				} catch (final Exception e) {
@@ -92,5 +50,55 @@ public class JsonChunkerQueuePopulator {
 				}
 			}
 		};
+	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static final class Builder {
+		private InputStream inputStream;
+		private JsonParser parser;
+		private JsonChunker chunker;
+		
+		private Builder() {}
+		
+		/**
+		 * @param inputStream Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
+		 * @return Builder returns this Builder so that one can chain the calls
+		 */
+		public Builder inputStream(InputStream inputStream) {
+			this.inputStream = inputStream;
+			return this;
+		}
+		
+		public Builder parser(JsonParser parser) {
+			this.parser = parser;
+			return this;
+		}
+		
+		public Builder chunker(JsonChunker chunker) {
+			this.chunker = chunker;
+			return this;
+		}
+		
+		private void defaultParserIfNull() {
+			if (this.parser == null) {
+				// Use the default (non-validating) parser
+				this.parser = Json.createParser(inputStream);
+			}
+		}
+		
+		public void validate() {
+			checkNotBothNull(inputStream, parser, "inputStream and parser cannot both be null");
+			checkNotBothPresent(inputStream, parser, "inputStream and parser cannot both be present");
+			checkNotNull(chunker, "chunker cannot be null");
+		}
+		
+		public JsonChunkerQueuePopulator build() {
+			validate();
+			defaultParserIfNull();
+			return new JsonChunkerQueuePopulator(parser, chunker);
+		}
 	}
 }

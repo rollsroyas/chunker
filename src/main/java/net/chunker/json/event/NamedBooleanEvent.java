@@ -5,37 +5,26 @@ import javax.json.stream.JsonGenerator;
 import org.pojomatic.Pojomatic;
 import org.pojomatic.annotations.AutoProperty;
 
-import net.chunker.json.api.JsonEvent;
-
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
 @AutoProperty
-public class NamedNumberEvent extends NamedEvent {
+public class NamedBooleanEvent extends NamedEvent {
 	
-	private final JsonEvent event;
+	final boolean bool;
 	
-	protected NamedNumberEvent(String name, JsonEvent event) {
+	protected NamedBooleanEvent(String name, boolean bool) {
 		super(name);
-		this.event = event;
+		this.bool=bool;
 	}
 
 	@Override
 	public void applyTo(JsonGenerator generator) {
-		
 		if (name != null) {
-			if (event.isIntegralNumber()) {
-				generator.write(name, event.getInt());
-			} else {
-				generator.write(name, event.getBigDecimal());
-			}			
+			generator.write(name, bool);
 		} else {
-			if (event.isIntegralNumber()) {
-				generator.write(event.getInt());
-			} else {
-				generator.write(event.getBigDecimal());
-			}
-		}
+			generator.write(bool);
+		}		
 	}
 
 	@Override public boolean equals(Object o) {

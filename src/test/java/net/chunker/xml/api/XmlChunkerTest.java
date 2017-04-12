@@ -1,5 +1,7 @@
 package net.chunker.xml.api;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -33,6 +35,7 @@ import com.chunker.xml.impl.CdChunkFactoryImpl;
  *
  */
 public class XmlChunkerTest {
+	private static final int XML_REPEATED_ELEMENTS_SIZE = 26;
 	
 	@Test
 	public void chunkSizeDefault() throws Exception {
@@ -54,7 +57,8 @@ public class XmlChunkerTest {
 		BlockingQueue<Callable<Catalog>> queue = new ArrayBlockingQueue<Callable<Catalog>>(100);
 		XmlElementMatcher matcher = new XmlElementMatcherImpl("CD");
 		CdChunkFactoryImpl factory = new CdChunkFactoryImpl();
-		MemoryManagerImpl memoryManager = new MemoryManagerImpl(100, 0.8);
+		//setting these values low to force a GC
+		MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
 		Builder<Catalog> builder = XmlChunkerImpl.<Catalog>builder();
 		if (chunkSize != null) builder.chunkSize(chunkSize);
 		XmlChunker chunker = builder
@@ -71,13 +75,20 @@ public class XmlChunkerTest {
 			.build()
 			.populate();
 		
+		if (chunkSize == null) {
+			chunkSize = 1; //default size
+		}
+		
+		int numChunks = 0;
+		Callable<Catalog> callable;
 		Catalog catalog;
-		while ((catalog=queue.take().call()) != null) {				
+		// while ((catalog=queue.take().call()) != null) { 
+		// Polling prevents one from potentially getting into an infinite wait condition 
+		while ((callable=queue.poll(2, SECONDS)) != null && (catalog = callable.call()) != null) {
 			List<Cd> cds = catalog.getCd();
-			if (chunkSize == null) {
-				chunkSize = 1; //default size
-			}
+			numChunks++;
 			Assert.assertTrue("lte chunk size of "+chunkSize, cds.size() <= chunkSize.intValue());
 		}
+		Assert.assertEquals(((XML_REPEATED_ELEMENTS_SIZE-1) / chunkSize)+1, numChunks);
 	}
 }

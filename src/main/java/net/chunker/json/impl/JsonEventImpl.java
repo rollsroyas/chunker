@@ -49,7 +49,7 @@ public class JsonEventImpl implements JsonEvent {
 	}
 
 	/**
-	 * @see net.chunker.json.JsonEvent#getEvent()
+	 * @see net.chunker.json.api.JsonEvent#getEvent()
 	 */
 	@Override
 	public Event getEvent() {
@@ -57,7 +57,7 @@ public class JsonEventImpl implements JsonEvent {
 	}
 
 	/**
-	 * @see net.chunker.json.JsonEvent#getString()
+	 * @see net.chunker.json.api.JsonEvent#getString()
 	 */
 	@Override
 	public String getString() {
@@ -65,7 +65,7 @@ public class JsonEventImpl implements JsonEvent {
 	}
 
 	/**
-	 * @see net.chunker.json.JsonEvent#getBigDecimal()
+	 * @see net.chunker.json.api.JsonEvent#getBigDecimal()
 	 */
 	@Override
 	public BigDecimal getBigDecimal() {
@@ -73,7 +73,7 @@ public class JsonEventImpl implements JsonEvent {
 	}
 	
 	/**
-	 * @see net.chunker.json.JsonEvent#getInt()
+	 * @see net.chunker.json.api.JsonEvent#getInt()
 	 */
 	@Override
 	public int getInt() {
@@ -81,7 +81,7 @@ public class JsonEventImpl implements JsonEvent {
 	}
 	
 	/**
-	 * @see net.chunker.json.JsonEvent#isIntegralNumber()
+	 * @see net.chunker.json.api.JsonEvent#isIntegralNumber()
 	 */
 	@Override
 	public boolean isIntegralNumber() {

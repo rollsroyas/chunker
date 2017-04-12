@@ -9,24 +9,15 @@ import org.pojomatic.annotations.AutoProperty;
  * @author rollsroyas@alumni.ncsu.edu
  */
 @AutoProperty
-public class NamedStartObjectEvent extends NamedEvent {
-	
-	protected NamedStartObjectEvent(String name) {
-		super(name);
-	}
-	
-	@Override
-	public boolean isStart() {
-		return true;
+public class NamedEndEvent extends NamedEvent {
+
+	protected NamedEndEvent() {
+		super(null);
 	}
 
 	@Override
 	public void applyTo(JsonGenerator generator) {
-		if (name != null) {
-			generator.writeStartObject(name);
-		} else {
-			generator.writeStartObject();
-		}
+		generator.writeEnd();
 	}
 
 	@Override public boolean equals(Object o) {
@@ -40,5 +31,4 @@ public class NamedStartObjectEvent extends NamedEvent {
 	@Override public String toString() {
 		return Pojomatic.toString(this);
 	}
-
 }
