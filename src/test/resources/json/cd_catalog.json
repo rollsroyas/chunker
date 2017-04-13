@@ -5,7 +5,8 @@
    "COUNTRY":"USA",
    "COMPANY":"Columbia",
    "PRICE":10.90,
-   "YEAR":1985
+   "YEAR":1985,
+   "FAVORITE":true
   }
   ,{
     "TITLE":"Hide your heart",
@@ -13,7 +14,8 @@
     "COUNTRY":"UK",
     "COMPANY":"CBS Records",
     "PRICE":9.90,
-    "YEAR":1988
+    "YEAR":1988,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Greatest Hits",
@@ -21,7 +23,8 @@
     "COUNTRY":"USA",
     "COMPANY":"RCA",
     "PRICE":9.90,
-    "YEAR":1982
+    "YEAR":1982,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Still got the blues",
@@ -29,7 +32,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Virgin redords",
     "PRICE":10.20,
-    "YEAR":1990
+    "YEAR":1990,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Eros",
@@ -37,7 +41,8 @@
     "COUNTRY":"EU",
     "COMPANY":"BMG",
     "PRICE":9.90,
-    "YEAR":1997
+    "YEAR":1997,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"One night only",
@@ -45,7 +50,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Polydor",
     "PRICE":10.90,
-    "YEAR":1998
+    "YEAR":1998,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Sylvias Mother",
@@ -53,7 +59,8 @@
     "COUNTRY":"UK",
     "COMPANY":"CBS",
     "PRICE":8.10,
-    "YEAR":1973
+    "YEAR":1973,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Maggie May",
@@ -61,7 +68,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Pickwick",
     "PRICE":8.50,
-    "YEAR":1990
+    "YEAR":1990,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Romanza",
@@ -69,7 +77,8 @@
     "COUNTRY":"EU",
     "COMPANY":"Polydor",
     "PRICE":10.80,
-    "YEAR":1996
+    "YEAR":1996,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"When a man loves a woman",
@@ -77,7 +86,8 @@
     "COUNTRY":"USA",
     "COMPANY":"Atlantic",
     "PRICE":8.70,
-    "YEAR":1987
+    "YEAR":1987,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Black angel",
@@ -85,7 +95,8 @@
     "COUNTRY":"EU",
     "COMPANY":"Mega",
     "PRICE":10.90,
-    "YEAR":1995
+    "YEAR":1995,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"1999 Grammy Nominees",
@@ -93,7 +104,8 @@
     "COUNTRY":"USA",
     "COMPANY":"Grammy",
     "PRICE":10.20,
-    "YEAR":1999
+    "YEAR":1999,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"For the good times",
@@ -101,7 +113,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Mucik Master",
     "PRICE":8.70,
-    "YEAR":1995
+    "YEAR":1995,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Big Willie style",
@@ -109,7 +122,8 @@
     "COUNTRY":"USA",
     "COMPANY":"Columbia",
     "PRICE":9.90,
-    "YEAR":1997
+    "YEAR":1997,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Tupelo Honey",
@@ -117,7 +131,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Polydor",
     "PRICE":8.20,
-    "YEAR":1971
+    "YEAR":1971,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Soulsville",
@@ -125,7 +140,8 @@
     "COUNTRY":"Norway",
     "COMPANY":"WEA",
     "PRICE":7.90,
-    "YEAR":1996
+    "YEAR":1996,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"The very best of",
@@ -133,7 +149,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Island",
     "PRICE":8.90,
-    "YEAR":1990
+    "YEAR":1990,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Stop",
@@ -141,7 +158,8 @@
     "COUNTRY":"UK",
     "COMPANY":"A and M",
     "PRICE":8.90,
-    "YEAR":1988
+    "YEAR":1988,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Bridge of Spies",
@@ -149,7 +167,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Siren",
     "PRICE":7.90,
-    "YEAR":1987
+    "YEAR":1987,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Private Dancer",
@@ -157,7 +176,8 @@
     "COUNTRY":"UK",
     "COMPANY":"Capitol",
     "PRICE":8.90,
-    "YEAR":1983
+    "YEAR":1983,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Midt om natten",
@@ -165,7 +185,8 @@
     "COUNTRY":"EU",
     "COMPANY":"Medley",
     "PRICE":7.80,
-    "YEAR":1983
+    "YEAR":1983,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Pavarotti Gala Concert",
@@ -173,7 +194,8 @@
     "COUNTRY":"UK",
     "COMPANY":"DECCA",
     "PRICE":9.90,
-    "YEAR":1991
+    "YEAR":1991,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"The dock of the bay",
@@ -181,7 +203,8 @@
     "COUNTRY":"USA",
     "COMPANY":"Atlantic",
     "PRICE":7.90,
-    "YEAR":1987
+    "YEAR":1987,
+    "FAVORITE":false
   }
   ,{
     "TITLE":"Picture book",
@@ -189,7 +212,8 @@
     "COUNTRY":"EU",
     "COMPANY":"Elektra",
     "PRICE":7.20,
-    "YEAR":1985
+    "YEAR":1985,
+    "FAVORITE":null
   }
   ,{
     "TITLE":"Red",
@@ -197,7 +221,8 @@
     "COUNTRY":"UK",
     "COMPANY":"London",
     "PRICE":7.80,
-    "YEAR":1987
+    "YEAR":1987,
+    "FAVORITE":true
   }
   ,{
     "TITLE":"Unchain my heart",
@@ -205,6 +230,7 @@
     "COUNTRY":"USA",
     "COMPANY":"EMI",
     "PRICE":8.20,
-    "YEAR":1987
+    "YEAR":1987,
+    "FAVORITE":false
   }]
 }   

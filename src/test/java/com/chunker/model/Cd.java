@@ -22,6 +22,9 @@ public class Cd {
     protected BigDecimal price;
     @XmlElement(name = "YEAR")
     protected Integer year;
+    @XmlElement(name = "FAVORITE")
+    protected Boolean favorite;
+    
 	public String getTitle() {
 		return title;
 	}
@@ -57,6 +60,12 @@ public class Cd {
 	}
 	public void setYear(Integer year) {
 		this.year = year;
+	}
+	public Boolean getFavorite() {
+		return favorite;
+	}
+	public void setFavorite(Boolean favorite) {
+		this.favorite = favorite;
 	}
 
 }

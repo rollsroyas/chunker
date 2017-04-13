@@ -7,6 +7,7 @@
     <COMPANY>Columbia</COMPANY>
     <PRICE>10.90</PRICE>
     <YEAR>1985</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Hide your heart</TITLE>
@@ -15,6 +16,7 @@
     <COMPANY>CBS Records</COMPANY>
     <PRICE>9.90</PRICE>
     <YEAR>1988</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Greatest Hits</TITLE>
@@ -31,6 +33,7 @@
     <COMPANY>Virgin redords</COMPANY>
     <PRICE>10.20</PRICE>
     <YEAR>1990</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Eros</TITLE>
@@ -39,6 +42,7 @@
     <COMPANY>BMG</COMPANY>
     <PRICE>9.90</PRICE>
     <YEAR>1997</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>One night only</TITLE>
@@ -55,6 +59,7 @@
     <COMPANY>CBS</COMPANY>
     <PRICE>8.10</PRICE>
     <YEAR>1973</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Maggie May</TITLE>
@@ -63,6 +68,7 @@
     <COMPANY>Pickwick</COMPANY>
     <PRICE>8.50</PRICE>
     <YEAR>1990</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Romanza</TITLE>
@@ -79,6 +85,7 @@
     <COMPANY>Atlantic</COMPANY>
     <PRICE>8.70</PRICE>
     <YEAR>1987</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Black angel</TITLE>
@@ -87,6 +94,7 @@
     <COMPANY>Mega</COMPANY>
     <PRICE>10.90</PRICE>
     <YEAR>1995</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>1999 Grammy Nominees</TITLE>
@@ -102,7 +110,8 @@
     <COUNTRY>UK</COUNTRY>
     <COMPANY>Mucik Master</COMPANY>
     <PRICE>8.70</PRICE>
-    <YEAR>1995</YEAR>
+    <YEAR>1995</YEAR>  
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Big Willie style</TITLE>
@@ -111,6 +120,7 @@
     <COMPANY>Columbia</COMPANY>
     <PRICE>9.90</PRICE>
     <YEAR>1997</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Tupelo Honey</TITLE>
@@ -127,6 +137,7 @@
     <COMPANY>WEA</COMPANY>
     <PRICE>7.90</PRICE>
     <YEAR>1996</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>The very best of</TITLE>
@@ -135,6 +146,7 @@
     <COMPANY>Island</COMPANY>
     <PRICE>8.90</PRICE>
     <YEAR>1990</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Stop</TITLE>
@@ -151,6 +163,7 @@
     <COMPANY>Siren</COMPANY>
     <PRICE>7.90</PRICE>
     <YEAR>1987</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Private Dancer</TITLE>
@@ -159,6 +172,7 @@
     <COMPANY>Capitol</COMPANY>
     <PRICE>8.90</PRICE>
     <YEAR>1983</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Midt om natten</TITLE>
@@ -175,6 +189,7 @@
     <COMPANY>DECCA</COMPANY>
     <PRICE>9.90</PRICE>
     <YEAR>1991</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>The dock of the bay</TITLE>
@@ -183,6 +198,7 @@
     <COMPANY>Atlantic</COMPANY>
     <PRICE>7.90</PRICE>
     <YEAR>1987</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
   <CD>
     <TITLE>Picture book</TITLE>
@@ -199,6 +215,7 @@
     <COMPANY>London</COMPANY>
     <PRICE>7.80</PRICE>
     <YEAR>1987</YEAR>
+    <FAVORITE>true</FAVORITE>
   </CD>
   <CD>
     <TITLE>Unchain my heart</TITLE>
@@ -207,5 +224,6 @@
     <COMPANY>EMI</COMPANY>
     <PRICE>8.20</PRICE>
     <YEAR>1987</YEAR>
+    <FAVORITE>false</FAVORITE>
   </CD>
 </CATALOG>   
