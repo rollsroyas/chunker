@@ -14,7 +14,7 @@ public class NamedEndEventTest extends BasePojomaticTest<NamedEndEvent> {
 	public NamedEndEvent construct() {
 		return new NamedEndEvent();
 	}
-	
+
 	@Override
 	public String expectedToString() {
 		return "NamedEndEvent{name: {null}}";

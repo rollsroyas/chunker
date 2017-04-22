@@ -13,7 +13,7 @@ import net.chunker.json.api.JsonEvent;
 @AutoProperty
 public class NamedStringEvent extends NamedEvent {
 	protected final String string;
-	
+
 	protected NamedStringEvent(String name, JsonEvent event) {
 		super(name);
 		string = event.getString();
@@ -25,18 +25,21 @@ public class NamedStringEvent extends NamedEvent {
 			generator.write(name, string);
 		} else {
 			generator.write(string);
-		}		
+		}
 	}
 
-	@Override public boolean equals(Object o) {
+	@Override
+	public boolean equals(Object o) {
 		return Pojomatic.equals(this, o);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Pojomatic.hashCode(this);
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return Pojomatic.toString(this);
 	}
 

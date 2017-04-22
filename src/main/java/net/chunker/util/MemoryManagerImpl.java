@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
  * @author rollsroyas@alumni.ncsu.edu
  */
 public class MemoryManagerImpl implements MemoryManager {
-	
+
 	private static Logger LOG = LoggerFactory.getLogger(MemoryManagerImpl.class);
-	
+
 	private int gcCount;
 	private long maxMemory;
 	private double memoryTolerance;
@@ -27,14 +27,14 @@ public class MemoryManagerImpl implements MemoryManager {
 		this.numberOfCallsBetweenToleranceChecks = numberOfCallsBetweenToleranceChecks;
 		this.numberOfCallsSinceToleranceCheck = 0;
 	}
-	
+
 	/**
 	 * Made method final in hopes that it will get inlined
 	 */
 	private final boolean isMemoryUsageHigh(Runtime rt) {
-		return (rt.totalMemory()-rt.freeMemory())/(double)this.maxMemory > this.memoryTolerance;
+		return (rt.totalMemory() - rt.freeMemory()) / (double) this.maxMemory > this.memoryTolerance;
 	}
-	
+
 	/**
 	 * @see net.chunker.util.MemoryManager#gcIfNecessary()
 	 */
@@ -43,14 +43,14 @@ public class MemoryManagerImpl implements MemoryManager {
 		this.numberOfCallsSinceToleranceCheck++;
 		if (this.numberOfCallsSinceToleranceCheck > this.numberOfCallsBetweenToleranceChecks) {
 			this.numberOfCallsSinceToleranceCheck = 0;
-	
+
 			if (isMemoryUsageHigh(rt) && this.gcCount >= 0) {
-				synchronized(rt) {
+				synchronized (rt) {
 					// double check locking, b/c it's good enough
 					if (isMemoryUsageHigh(rt) && this.gcCount >= 0) {
 						gc();
-					}													
-				}						 
+					}
+				}
 			}
 		}
 	}
@@ -60,41 +60,39 @@ public class MemoryManagerImpl implements MemoryManager {
 		rt.gc();
 		rt.runFinalization();
 		rt.gc();
-		
+
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("After ChunkTransformer called gc()\tUsed:\t{}\tMax:\t{}", 
-					formatLong(rt.totalMemory()-rt.freeMemory()),  
-					formatLong(this.maxMemory));
+			LOG.trace(	"After ChunkTransformer called gc()\tUsed:\t{}\tMax:\t{}",
+						formatLong(rt.totalMemory() - rt.freeMemory()), formatLong(this.maxMemory));
 		}
 
-		
 		// if that does not cause the memory to get released,
 		// then don't bother doing it again
 		if (isMemoryUsageHigh(rt)) {
 			this.gcCount = -this.gcCount;
 		}
 	}
-	
-    private static final String formatLong(final long l) {
-        String s = Long.toString(Math.abs(l));
-        final int sLength = s.length();
-        
-        StringBuilder sb = new StringBuilder(sLength+(sLength/3)+(l<0 ? 1 : 0));
-        
-        sb.append(s);
-        
-        if (sLength > 3) {
-            int start =  sLength % 3;
-            if(start == 0) {
-            	start = 3;
-            }
-            for (int i = start; i <= s.length(); i += 4) {
-                sb.insert(i, ',');
-            }
-        }
-        if (l<0) {
-        	sb.insert(0, '-');
-        }
-        return sb.toString();
-    }
+
+	private static final String formatLong(final long l) {
+		String s = Long.toString(Math.abs(l));
+		final int sLength = s.length();
+
+		StringBuilder sb = new StringBuilder(sLength + (sLength / 3) + (l < 0 ? 1 : 0));
+
+		sb.append(s);
+
+		if (sLength > 3) {
+			int start = sLength % 3;
+			if (start == 0) {
+				start = 3;
+			}
+			for (int i = start; i <= s.length(); i += 4) {
+				sb.insert(i, ',');
+			}
+		}
+		if (l < 0) {
+			sb.insert(0, '-');
+		}
+		return sb.toString();
+	}
 }

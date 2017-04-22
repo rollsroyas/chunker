@@ -9,15 +9,15 @@ import org.pojomatic.annotations.AutoProperty;
  */
 @AutoProperty
 public abstract class NamedEvent {
-	
+
 	protected final String name;
-	
+
 	protected NamedEvent(String name) {
 		this.name = name;
 	}
-	
+
 	public abstract void applyTo(JsonGenerator generator);
-	
+
 	public boolean isStart() {
 		return false;
 	}

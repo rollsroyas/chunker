@@ -36,16 +36,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
- * This class assumes memory is limited and therefore provides a means to breaks large XML documents into  
- * smaller chunks which can be processed using less memory
- * Special thanks to <a>http://fgeorges.blogspot.com/2006/08/translate-sax-events-to-dom-tree.html</a>
+ * This class assumes memory is limited and therefore provides a means to break
+ * large XML documents into smaller chunks which can be processed using less
+ * memory. Special thanks to
+ * <a>http://fgeorges.blogspot.com/2006/08/translate-sax-events-to-dom-tree.html
+ * </a>
  * 
  * @author rollsroyas@alumni.ncsu.edu
  *
- * @param <A> - The JAXB class that wraps the repeated element (chunk) 
+ * @param <A>
+ *            The JAXB class that wraps the repeated element (chunk)
  */
-public class XmlChunkerImpl<A> extends XmlChunker
-{	
+public class XmlChunkerImpl<A> extends XmlChunker {
 	private static Logger LOG = LoggerFactory.getLogger(XmlChunkerImpl.class);
 
 	private BlockingQueue<Callable<A>> queue;
@@ -55,21 +57,28 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	private MemoryManager memoryManager;
 	private Document document;
 	private final int chunkSize;
-	
+
 	private boolean firstMatch;
 	private int currentChunkSize;
-    private Node currentNode;   	
+	private Node currentNode;
 	private Element inChunkElement;
-	
+
 	private Exception exception;
-	
+
 	/**
-	 * @param queue Contains the chunks, Note that when the Callable returns null then there are no more chunks to process
-	 * @param factory Creates the chunks (Callables) that go on the queue
-	 * @param transformer Converts from DOM to String
-	 * @param document Stores the DOM for the current chunk
-	 * @param chunkSize The max number of elements in a chunk
-	 * @param memoryManager This functional interface will be invoked after every chunk
+	 * @param queue
+	 *            Contains the chunks, Note that when the Callable returns null
+	 *            then there are no more chunks to process
+	 * @param factory
+	 *            Creates the chunks (Callables) that go on the queue
+	 * @param transformer
+	 *            Converts from DOM to String
+	 * @param document
+	 *            Stores the DOM for the current chunk
+	 * @param chunkSize
+	 *            The max number of elements in a chunk
+	 * @param memoryManager
+	 *            This functional interface will be invoked after every chunk
 	 */
 	private XmlChunkerImpl(Builder<A> builder) {
 		this.queue = builder.queue;
@@ -79,52 +88,47 @@ public class XmlChunkerImpl<A> extends XmlChunker
 		this.currentNode = this.document = builder.document;
 		this.chunkSize = builder.chunkSize;
 		this.memoryManager = builder.memoryManager;
-		
+
 		inChunkElement = null;
-		
+
 		firstMatch = true;
 		currentChunkSize = 0;
 	}
 
-	//===========================================================
+	// ===========================================================
 	// SAX DocumentHandler methods
-	//===========================================================
+	// ===========================================================
 
 	/**
 	 * @see net.chunker.xml.api.XmlChunker#startDocument()
 	 */
 	@Override
-	public void startDocument()
-	throws SAXException
-	{
-		// Must implement method, however this event is not needed to chunk the XML
+	public void startDocument() throws SAXException {
+		// Must implement method, however this event is not needed to chunk the
+		// XML
 	}
 
 	/**
 	 * @see net.chunker.xml.api.XmlChunker#endDocument()
 	 */
 	@Override
-	public void endDocument()
-	throws SAXException
-	{
+	public void endDocument() throws SAXException {
 		doChunk(true);
 		document = null;
 	}
 
 	/**
-	 * @see net.chunker.xml.api.XmlChunker#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+	 * @see net.chunker.xml.api.XmlChunker#startElement(java.lang.String,
+	 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startElement(String namespaceURI,
-							 String sName, // simple name
-							 String qName, // qualified name
-							 Attributes attrs)
-	throws SAXException
-	{
+	public void startElement(String namespaceURI, String sName, // simple name
+			String qName, // qualified name
+			Attributes attrs) throws SAXException {
 
 		// Create the element.
 		Element elem = document.createElementNS(namespaceURI, qName);
-        
+
 		if (matchesExpectedNamespaceAndName(namespaceURI, sName) && inChunkElement == null) {
 			if (firstMatch) {
 				firstMatch = false;
@@ -136,36 +140,35 @@ public class XmlChunkerImpl<A> extends XmlChunker
 			currentChunkSize++;
 		}
 
-        // Add each attribute.
-        copyAttributesToElement(attrs, elem);
-        // Actually add it in the tree, and adjust the right place.
-        currentNode.appendChild(elem);
-        currentNode = elem;        
-		
+		// Add each attribute.
+		copyAttributesToElement(attrs, elem);
+		// Actually add it in the tree, and adjust the right place.
+		currentNode.appendChild(elem);
+		currentNode = elem;
+
 	}
 
 	protected void removeNodesForTheChunkFromCurrentNode() {
 		NodeList list = currentNode.getChildNodes();
-		for (int i = list.getLength() - 1; i >= 0 ; i--) {
+		for (int i = list.getLength() - 1; i >= 0; i--) {
 			Node node = list.item(i);
-			if (matchesExpectedNamespaceAndName(node.getNamespaceURI(), node.getLocalName()) || 
-					(i > 0 && isBlank(node)))
-			{
+			if (matchesExpectedNamespaceAndName(node.getNamespaceURI(), node.getLocalName())
+					|| (i > 0 && isBlank(node))) {
 				currentNode.removeChild(node);
 			}
 		}
-		currentChunkSize=0;
+		currentChunkSize = 0;
 	}
 
 	private void copyAttributesToElement(Attributes attrs, Element elem) {
-		for ( int i = 0; i < attrs.getLength(); ++i ) {
-            String nsUri = attrs.getURI(i);
-            String qname = attrs.getQName(i);
-            String value = attrs.getValue(i);
-            Attr attr = document.createAttributeNS(nsUri, qname);
-            attr.setValue(value);
-            elem.setAttributeNodeNS(attr);
-        }
+		for (int i = 0; i < attrs.getLength(); ++i) {
+			String nsUri = attrs.getURI(i);
+			String qname = attrs.getQName(i);
+			String value = attrs.getValue(i);
+			Attr attr = document.createAttributeNS(nsUri, qname);
+			attr.setValue(value);
+			elem.setAttributeNodeNS(attr);
+		}
 	}
 
 	private static boolean isBlank(final CharSequence cs) {
@@ -180,10 +183,10 @@ public class XmlChunkerImpl<A> extends XmlChunker
 		}
 		return true;
 	}
-	
+
 	private boolean isBlank(Node node) {
 		if (node instanceof Text) {
-			Text text = (Text)node;
+			Text text = (Text) node;
 			return isBlank(text.getWholeText());
 		}
 		return false;
@@ -194,19 +197,17 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	}
 
 	/**
-	 * @see net.chunker.xml.api.XmlChunker#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 * @see net.chunker.xml.api.XmlChunker#endElement(java.lang.String,
+	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void endElement(String namespaceURI,
-						   String sName, // simple name
-						   String qName  // qualified name
-						  )
-	throws SAXException
-	{		
+	public void endElement(String namespaceURI, String sName, // simple name
+			String qName // qualified name
+	) throws SAXException {
 		if (currentNode == inChunkElement) {
-			inChunkElement = null;		
+			inChunkElement = null;
 		}
-		
+
 		currentNode = currentNode.getParentNode();
 	}
 
@@ -214,34 +215,34 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	 * @see net.chunker.xml.api.XmlChunker#characters(char[], int, int)
 	 */
 	@Override
-	public void characters(char[] buf, int offset, int len)
-	throws SAXException
-	{
-		String str  = new String(buf, offset, len);
-        Text text = document.createTextNode(str);
-        currentNode.appendChild(text);	
+	public void characters(char[] buf, int offset, int len) throws SAXException {
+		String str = new String(buf, offset, len);
+		Text text = document.createTextNode(str);
+		currentNode.appendChild(text);
 	}
-	
+
 	private void doChunk(boolean last) throws SAXException {
 		String text = null;
 		try {
-			// Uncommenting this sleep allowed me to proves the code is reading data from queue while simultaneously adding to it.
-			//if (last) Thread.sleep(2000);
-			
+			// Uncommenting this sleep allowed me to proves the code is reading
+			// data from queue while simultaneously adding to it.
+			// if (last) Thread.sleep(2000);
+
 			text = domToString();
-			
+
 			LOG.trace("Chunk text:\n{}", text);
-			
+
 			putChunkOnQueue(text, last);
-			
+
 		} catch (Exception e) {
 			if (e instanceof InterruptedException) {
-				Thread.currentThread().interrupt();
+				Thread.currentThread()
+					.interrupt();
 			}
-			throw new SAXException("Unable to process chunk:\n"+text,e);
+			throw new SAXException("Unable to process chunk:\n" + text, e);
 		} finally {
 			gcIfNecessary();
-		}		
+		}
 	}
 
 	private void putChunkOnQueue(String text, boolean last) throws InterruptedException {
@@ -258,11 +259,11 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	private String domToString() throws TransformerException {
 		DOMSource source = new DOMSource(document);
 		StringWriter writer = new StringWriter();
-		StreamResult result = new StreamResult(writer);				
-		transformer.transform(source, result);	
+		StreamResult result = new StreamResult(writer);
+		transformer.transform(source, result);
 		return writer.toString();
 	}
-	
+
 	/**
 	 * @see net.chunker.xml.api.XmlChunker#finish()
 	 */
@@ -270,13 +271,14 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	public void finish() {
 		try {
 			Callable<A> finalCallable = Chunkers.<A>createFinalCallable(exception);
-			queue.put(finalCallable);	
+			queue.put(finalCallable);
 		} catch (InterruptedException e1) {
 			LOG.error("Unable to add final chunk to queue", exception);
-			Thread.currentThread().interrupt();
+			Thread.currentThread()
+				.interrupt();
 		}
 	}
-	
+
 	/**
 	 * @see net.chunker.xml.api.XmlChunker#setException(java.lang.Exception)
 	 */
@@ -284,7 +286,7 @@ public class XmlChunkerImpl<A> extends XmlChunker
 	public void setException(final Exception e) {
 		this.exception = e;
 	}
-	
+
 	public static final class Builder<A> {
 		private MemoryManager memoryManager;
 		private BlockingQueue<Callable<A>> queue;
@@ -292,7 +294,7 @@ public class XmlChunkerImpl<A> extends XmlChunker
 		private XmlChunkFactory<A> factory;
 		private Transformer transformer;
 		private Document document;
-		private int chunkSize;
+		int chunkSize;
 
 		private Builder() {
 			chunkSize = 1;
@@ -302,7 +304,7 @@ public class XmlChunkerImpl<A> extends XmlChunker
 			this.chunkSize = chunkSize;
 			return this;
 		}
-		
+
 		public Builder<A> transformer(Transformer transformer) {
 			this.transformer = transformer;
 			return this;
@@ -312,69 +314,70 @@ public class XmlChunkerImpl<A> extends XmlChunker
 			this.document = document;
 			return this;
 		}
-		
-		public Builder<A> memoryManager (MemoryManager memoryManager) {
+
+		public Builder<A> memoryManager(MemoryManager memoryManager) {
 			this.memoryManager = memoryManager;
 			return this;
 		}
-		
+
 		public Builder<A> queue(BlockingQueue<Callable<A>> queue) {
 			this.queue = queue;
 			return this;
 		}
-		
+
 		public Builder<A> matcher(XmlElementMatcher matcher) {
 			this.matcher = matcher;
 			return this;
 		}
-		
+
 		public Builder<A> factory(XmlChunkFactory<A> factory) {
 			this.factory = factory;
 			return this;
 		}
-		
+
 		private void defaultTransformerIfNull() {
 			if (this.transformer == null) {
 				try {
-					this.transformer = TransformerFactory.newInstance().newTransformer();
-				} catch (TransformerConfigurationException
-						| TransformerFactoryConfigurationError e) {
+					this.transformer = TransformerFactory.newInstance()
+						.newTransformer();
+				} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
 					throw new IllegalStateException(e);
 				}
 			}
 		}
-		
+
 		private void defaultDocumentIfNull() {
 			if (this.document == null) {
 				// Find the implementation
-		        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		        docFactory.setNamespaceAware(true);
-		        DocumentBuilder builder;
+				DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+				docFactory.setNamespaceAware(true);
+				DocumentBuilder builder;
 				try {
 					builder = docFactory.newDocumentBuilder();
 				} catch (ParserConfigurationException e) {
 					throw new IllegalStateException(e);
 				}
-		        DOMImplementation impl = builder.getDOMImplementation();
-	
-		        // Create the document
-		        this.document = impl.createDocument(null, null, null);
+				DOMImplementation impl = builder.getDOMImplementation();
+
+				// Create the document
+				this.document = impl.createDocument(null, null, null);
 			}
 		}
-		
+
 		public void validate() {
 			checkNotNull(queue, "queue cannot be null");
+			checkNotNull(matcher, "matcher cannot be null");
 			checkNotNull(factory, "factory cannot be null");
 		}
-		
+
 		public XmlChunker build() {
 			validate();
 			defaultTransformerIfNull();
-			defaultDocumentIfNull();			
+			defaultDocumentIfNull();
 			return new XmlChunkerImpl<>(this);
 		}
 	}
-	
+
 	public static <A> Builder<A> builder() {
 		return new Builder<>();
 	}

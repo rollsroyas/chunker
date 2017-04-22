@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import javax.json.stream.JsonParser.Event;
 
 /**
- * JsonParser is mutable.  The intent of this interface is to provide an immutable object 
- * capturing JsonParser's state at the point in time the implementation is instantiated
+ * JsonParser is mutable. The intent of this interface is to provide an
+ * immutable object capturing JsonParser's state at the point in time the
+ * implementation is instantiated
+ * 
  * @author rollsroyas@alumni.ncsu.edu
  */
 public interface JsonEvent {
@@ -18,6 +20,6 @@ public interface JsonEvent {
 	BigDecimal getBigDecimal();
 
 	int getInt();
-	
+
 	boolean isIntegralNumber();
 }

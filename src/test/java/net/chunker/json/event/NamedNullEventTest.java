@@ -11,10 +11,10 @@ public class NamedNullEventTest extends BasePojomaticTest<NamedNullEvent> {
 	 * @see BasePojomaticTest#construct()
 	 */
 	@Override
-	public  NamedNullEvent construct() {
-		return new  NamedNullEvent("name");
+	public NamedNullEvent construct() {
+		return new NamedNullEvent("name");
 	}
-	
+
 	@Override
 	public String expectedToString() {
 		return "NamedNullEvent{name: {name}}";

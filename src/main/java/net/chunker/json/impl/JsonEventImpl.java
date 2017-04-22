@@ -21,7 +21,7 @@ public class JsonEventImpl implements JsonEvent {
 	private final BigDecimal number;
 	private final int integer;
 	private final boolean integralNumber;
-	
+
 	public JsonEventImpl(JsonParser parser) {
 		this.event = parser.next();
 		if (event == Event.KEY_NAME || event == Event.VALUE_STRING) {
@@ -71,7 +71,7 @@ public class JsonEventImpl implements JsonEvent {
 	public BigDecimal getBigDecimal() {
 		return number;
 	}
-	
+
 	/**
 	 * @see net.chunker.json.api.JsonEvent#getInt()
 	 */
@@ -79,7 +79,7 @@ public class JsonEventImpl implements JsonEvent {
 	public int getInt() {
 		return integer;
 	}
-	
+
 	/**
 	 * @see net.chunker.json.api.JsonEvent#isIntegralNumber()
 	 */
@@ -88,15 +88,18 @@ public class JsonEventImpl implements JsonEvent {
 		return integralNumber;
 	}
 
-	@Override public boolean equals(Object o) {
+	@Override
+	public boolean equals(Object o) {
 		return Pojomatic.equals(this, o);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Pojomatic.hashCode(this);
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return Pojomatic.toString(this);
 	}
 

@@ -5,6 +5,8 @@ package net.chunker.json.api;
  */
 public interface JsonChunker {
 	void handleEvent(JsonEvent event);
+
 	void setException(Exception e);
+
 	void finish();
 }

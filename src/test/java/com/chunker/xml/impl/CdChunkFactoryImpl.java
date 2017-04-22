@@ -16,7 +16,7 @@ import net.chunker.xml.api.XmlChunkFactory;
  */
 public class CdChunkFactoryImpl implements XmlChunkFactory<Catalog> {
 	private Unmarshaller unmashaller;
-	
+
 	public CdChunkFactoryImpl() throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance(Catalog.class);
 		this.unmashaller = jc.createUnmarshaller();
@@ -27,7 +27,7 @@ public class CdChunkFactoryImpl implements XmlChunkFactory<Catalog> {
 		return new Callable<Catalog>() {
 			public Catalog call() throws Exception {
 				StringReader reader = new StringReader(chunk);
-				return (Catalog)unmashaller.unmarshal( reader );
+				return (Catalog) unmashaller.unmarshal(reader);
 			}
 		};
 	}

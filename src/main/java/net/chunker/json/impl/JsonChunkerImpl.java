@@ -28,66 +28,67 @@ import net.chunker.util.MemoryManager;
  * @author rollsroyas@alumni.ncsu.edu
  */
 public class JsonChunkerImpl<A> implements JsonChunker {
-	
+
 	private static Logger LOG = LoggerFactory.getLogger(JsonChunkerImpl.class);
-    
-    private final BlockingQueue<Callable<A>> queue;
+
+	private final BlockingQueue<Callable<A>> queue;
 	private final JsonArrayMatcher matcher;
 	private final JsonChunkFactory<A> factory;
 	private final int chunkSize;
 	private final MemoryManager memoryManager;
-	
+
 	private Exception exception;
 	private int chunkCount;
 	private int inMatchedArrayStartObjectEventCount;
 	private boolean inMatchedArray;
 	private String currentName;
-	
+
 	private List<NamedEvent> beforeMatchEvents;
-	private List<NamedEvent> currentEvents;	
+	private List<NamedEvent> currentEvents;
 
 	private JsonChunkerImpl(Builder<A> builder) {
-	   this.queue = builder.queue;
-	   this.matcher = builder.matcher;
-	   this.factory = builder.factory;
-	   this.chunkSize = builder.chunkSize;
-	   
-	   this.memoryManager = builder.memoryManager;
-	   
-	   this.beforeMatchEvents = new ArrayList<>();
-	   this.currentEvents = new ArrayList<>();
-	   
-	   this.exception = null;
-	   this.chunkCount = 0;
-	   this.inMatchedArrayStartObjectEventCount = 0;
-	   this.inMatchedArray = false;
-	   this.currentName = null;
+		this.queue = builder.queue;
+		this.matcher = builder.matcher;
+		this.factory = builder.factory;
+		this.chunkSize = builder.chunkSize;
+
+		this.memoryManager = builder.memoryManager;
+
+		this.beforeMatchEvents = new ArrayList<>();
+		this.currentEvents = new ArrayList<>();
+
+		this.exception = null;
+		this.chunkCount = 0;
+		this.inMatchedArrayStartObjectEventCount = 0;
+		this.inMatchedArray = false;
+		this.currentName = null;
 	}
-	
+
 	/**
 	 * @see JsonChunker#handleEvent(JsonEvent)
-	 * @param jsonEvent The next event to be used to create a chunk of JSON
+	 * @param jsonEvent
+	 *            The next event to be used to create a chunk of JSON
 	 */
 	@Override
-	public void handleEvent(JsonEvent jsonEvent) {		
+	public void handleEvent(JsonEvent jsonEvent) {
 		final NamedEvent currentNamedEvent = ifNotKeyNameThenCreateNamedEvent(jsonEvent);
 		ifPresentAndNotInMatchThenAddToBeforeMatchEvents(currentNamedEvent);
 		Event event = jsonEvent.getEvent();
 		switch (event) {
-			case KEY_NAME:
-				setCurrentName(jsonEvent);
-				break;
-			case START_ARRAY:
-				ifFirstMatchThenAddBeforeMatchEventsToCurrentEvents();
-				break;					
-			case START_OBJECT:
-				ifInMatchAndIfChunkCountEqualsChunkSizeThenProcessChunkAndResetCurrentEvents();
-				break;					
-			case END_OBJECT:
-				ifInMatchAndIfAppropriateIncrementChunkCount();  
-				break;
-			default:
-				break;
+		case KEY_NAME:
+			setCurrentName(jsonEvent);
+			break;
+		case START_ARRAY:
+			ifFirstMatchThenAddBeforeMatchEventsToCurrentEvents();
+			break;
+		case START_OBJECT:
+			ifInMatchAndIfChunkCountEqualsChunkSizeThenProcessChunkAndResetCurrentEvents();
+			break;
+		case END_OBJECT:
+			ifInMatchAndIfAppropriateIncrementChunkCount();
+			break;
+		default:
+			break;
 		}
 		if (notKeyName(currentNamedEvent)) {
 			ifInMatchThenAddToCurrentEvent(currentNamedEvent);
@@ -105,24 +106,24 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 		}
 		return currentNamedEvent;
 	}
-	
+
 	private void ifPresentAndNotInMatchThenAddToBeforeMatchEvents(final NamedEvent currentNamedEvent) {
-		if (currentNamedEvent != null && !inMatchedArray) {       	
+		if (currentNamedEvent != null && !inMatchedArray) {
 			beforeMatchEvents.add(currentNamedEvent);
-        }
+		}
 	}
 
 	private void setCurrentName(JsonEvent jsonEvent) {
 		currentName = jsonEvent.getString();
 	}
-	
+
 	private void ifFirstMatchThenAddBeforeMatchEventsToCurrentEvents() {
 		if (!inMatchedArray && matcher.acceptName(currentName)) {
 			inMatchedArray = true;
-			currentEvents = new ArrayList<>(beforeMatchEvents);	
+			currentEvents = new ArrayList<>(beforeMatchEvents);
 		}
 	}
-	
+
 	private void ifInMatchAndIfChunkCountEqualsChunkSizeThenProcessChunkAndResetCurrentEvents() {
 		if (inMatchedArray) {
 			if (chunkCount % chunkSize == 0) {
@@ -132,28 +133,28 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 			inMatchedArrayStartObjectEventCount++;
 		}
 	}
-	
+
 	private void processCurrentEvents(final boolean lastChunk) {
 		if (chunkCount > 0) {
 			String text = currentEventsToChunk(lastChunk);
-			
+
 			LOG.trace("Chunk text:\n{}", text);
-			
+
 			putChunkOnQueue(lastChunk, text);
-			
+
 			gcIfNecessary();
 		}
 	}
-	
+
 	private String currentEventsToChunk(final boolean lastChunk) {
 		StringWriter stringWriter = new StringWriter();
 		try (JsonGenerator generator = Json.createGenerator(stringWriter)) {
 			applyEventsToGenerator(generator);
-			
+
 			if (!lastChunk) {
 				writeEndForStartEventsWithoutAnEndEvent(generator);
 			}
-		}			
+		}
 		return stringWriter.toString();
 	}
 
@@ -167,7 +168,7 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 
 	private void applyEventsToGenerator(JsonGenerator generator) {
 		for (NamedEvent event : currentEvents) {
-			event.applyTo(generator);				
+			event.applyTo(generator);
 		}
 	}
 
@@ -183,11 +184,12 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 		try {
 			queue.put(chunk);
 		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new JsonChunkingException("Unable to process: "+text, e);
+			Thread.currentThread()
+				.interrupt();
+			throw new JsonChunkingException("Unable to process: " + text, e);
 		}
 	}
-	
+
 	private void ifInMatchAndIfAppropriateIncrementChunkCount() {
 		if (inMatchedArray) {
 			inMatchedArrayStartObjectEventCount--;
@@ -196,17 +198,17 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 			}
 		}
 	}
-	
+
 	private boolean notKeyName(final NamedEvent currentNamedEvent) {
 		return currentNamedEvent != null;
-		
+
 	}
-	
+
 	private void ifInMatchThenAddToCurrentEvent(final NamedEvent currentNamedEvent) {
-		if (inMatchedArray) {       	
-        	currentEvents.add(currentNamedEvent);
-        }
-       
+		if (inMatchedArray) {
+			currentEvents.add(currentNamedEvent);
+		}
+
 	}
 
 	private void resetCurrentName() {
@@ -215,7 +217,8 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 
 	/**
 	 * @see JsonChunker#setException(Exception)
-	 * @param e Exception to be propogated via the last Callable on the queue
+	 * @param e
+	 *            Exception to be propogated via the last Callable on the queue
 	 */
 	@Override
 	public void setException(Exception e) {
@@ -228,68 +231,69 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	@Override
 	public void finish() {
 		processCurrentEvents(true);
-		
+
 		donePuttingChunksOnQueue();
 	}
 
 	private void donePuttingChunksOnQueue() {
 		try {
 			Callable<A> finalCallable = Chunkers.<A>createFinalCallable(exception);
-			queue.put(finalCallable);	
+			queue.put(finalCallable);
 		} catch (InterruptedException e1) {
 			LOG.error("Unable to add final chunk to queue", exception);
-			Thread.currentThread().interrupt();
+			Thread.currentThread()
+				.interrupt();
 		}
 	}
-	
+
 	public static final class Builder<A> {
 		private MemoryManager memoryManager;
 		private BlockingQueue<Callable<A>> queue;
 		private JsonArrayMatcher matcher;
 		private JsonChunkFactory<A> factory;
-		private int chunkSize;
+		int chunkSize;
 
 		private Builder() {
-			 chunkSize = 1;
+			chunkSize = 1;
 		}
 
 		public Builder<A> chunkSize(int chunkSize) {
 			this.chunkSize = chunkSize;
 			return this;
 		}
-		
-		public Builder<A> memoryManager (MemoryManager memoryManager) {
+
+		public Builder<A> memoryManager(MemoryManager memoryManager) {
 			this.memoryManager = memoryManager;
 			return this;
 		}
-		
+
 		public Builder<A> queue(BlockingQueue<Callable<A>> queue) {
 			this.queue = queue;
 			return this;
 		}
-		
+
 		public Builder<A> factory(JsonChunkFactory<A> factory) {
 			this.factory = factory;
 			return this;
 		}
-		
+
 		public Builder<A> matcher(JsonArrayMatcher matcher) {
 			this.matcher = matcher;
 			return this;
 		}
-		
+
 		public void validate() {
 			checkNotNull(queue, "queue cannot be null");
 			checkNotNull(matcher, "matcher cannot be null");
 			checkNotNull(factory, "factory cannot be null");
 		}
-		
+
 		public JsonChunkerImpl<A> build() {
-			validate();			
+			validate();
 			return new JsonChunkerImpl<>(this);
 		}
 	}
-	
+
 	public static <A> Builder<A> builder() {
 		return new Builder<>();
 	}

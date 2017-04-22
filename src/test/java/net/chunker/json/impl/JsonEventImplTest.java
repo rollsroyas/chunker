@@ -10,35 +10,35 @@ import com.chunker.BasePojomaticTest;
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
-public class JsonEventImplTest  extends BasePojomaticTest<JsonEventImpl> {
+public class JsonEventImplTest extends BasePojomaticTest<JsonEventImpl> {
 
-private static final JsonParser PARSER = new JsonParser() {
-		
+	private static final JsonParser PARSER = new JsonParser() {
+
 		@Override
 		public boolean isIntegralNumber() {
 			return false;
 		}
-		
+
 		@Override
 		public String getString() {
 			return "string";
 		}
-		
+
 		@Override
 		public int getInt() {
 			return 0;
 		}
-		
+
 		@Override
 		public Event next() {
 			return Event.KEY_NAME;
 		}
-		
+
 		@Override
 		public BigDecimal getBigDecimal() {
 			return null;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "event";
@@ -63,7 +63,7 @@ private static final JsonParser PARSER = new JsonParser() {
 		public void close() {
 		}
 	};
-	
+
 	/**
 	 * @see BasePojomaticTest#construct()
 	 */
@@ -71,7 +71,7 @@ private static final JsonParser PARSER = new JsonParser() {
 	public JsonEventImpl construct() {
 		return new JsonEventImpl(PARSER);
 	}
-	
+
 	@Override
 	public String expectedToString() {
 		return "JsonEventImpl{event: {KEY_NAME}, string: {string}, number: {null}, integer: {0}, integralNumber: {false}}";

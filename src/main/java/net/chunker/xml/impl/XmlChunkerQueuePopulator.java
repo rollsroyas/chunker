@@ -9,10 +9,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.SAXException;
+
 import net.chunker.util.MonitoredInputStream;
 import net.chunker.xml.api.XmlChunker;
-
-import org.xml.sax.SAXException;
 
 /**
  * @author rollsroyas@alumni.ncsu.edu
@@ -20,20 +20,20 @@ import org.xml.sax.SAXException;
 public class XmlChunkerQueuePopulator {
 
 	private final InputStream inputStream;
-	private final SAXParser saxParser;
+	private final SAXParser parser;
 	private final XmlChunker chunker;
-	
-	private XmlChunkerQueuePopulator(XmlChunker chunker, SAXParser saxParser, InputStream inputStream) {
-		this.inputStream=inputStream;
-		this.saxParser=saxParser;
-		this.chunker=chunker;		
+
+	private XmlChunkerQueuePopulator(Builder builder) {
+		this.inputStream = builder.inputStream;
+		this.parser = builder.saxParser;
+		this.chunker = builder.chunker;
 	}
-	
+
 	/**
-	 * The last element in the queue will we be a Callable whose call method returns null 
-	 * or it will throw an exception if the sax parser threw one
+	 * The last element in the queue will we be a Callable whose call method
+	 * returns null or it will throw an exception if the sax parser threw one
 	 */
-	public void populate() {		
+	public void populate() {
 		new Thread(createPopulatorRunnable()).start();
 	}
 
@@ -42,47 +42,56 @@ public class XmlChunkerQueuePopulator {
 			@Override
 			public void run() {
 				MonitoredInputStream input = null;
-				try (MonitoredInputStream mis = new MonitoredInputStream(inputStream)){
+				try (MonitoredInputStream mis = new MonitoredInputStream(inputStream)) {
 					input = mis;
-					saxParser.parse(mis, chunker);
+					parser.parse(mis, chunker);
 				} catch (final Exception e) {
-					chunker.setException(new IOException("Error around byte #"+(input == null ? 0L : input.getProgress()), e));
+					chunker.setException(new IOException(
+							"Error around byte #" + (input == null ? 0L : input.getProgress()), e));
 				} finally {
 					chunker.finish();
 				}
 			}
 		};
 	}
-	
+
 	public static final class Builder {
 		private InputStream inputStream;
 		private SAXParser saxParser;
 		private XmlChunker chunker;
-		
-		private Builder() {}
-		
+
+		private Builder() {
+		}
+
 		/**
-		 * Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
-		 * @param inputStream Strongly recommended to wrap this InputStream in a java.io.BufferedInputStream
+		 * Strongly recommended to wrap this InputStream in a
+		 * java.io.BufferedInputStream
+		 * 
+		 * @param inputStream
+		 *            Strongly recommended to wrap this InputStream in a
+		 *            java.io.BufferedInputStream
 		 * @return this Builder so that one can chain the calls
 		 */
 		public Builder inputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 			return this;
 		}
-		public Builder saxParser(SAXParser saxParser) {
+
+		public Builder parser(SAXParser saxParser) {
 			this.saxParser = saxParser;
 			return this;
 		}
+
 		public Builder chunker(XmlChunker chunker) {
 			this.chunker = chunker;
 			return this;
 		}
+
 		private void defaultSaxParserIfNull() {
 			if (this.saxParser == null) {
 				// Use the default (non-validating) parser
 				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-				saxFactory.setNamespaceAware(true);	
+				saxFactory.setNamespaceAware(true);
 				try {
 					this.saxParser = saxFactory.newSAXParser();
 				} catch (ParserConfigurationException | SAXException e) {
@@ -90,19 +99,19 @@ public class XmlChunkerQueuePopulator {
 				}
 			}
 		}
-		
+
 		public void validate() {
 			checkNotNull(inputStream, "inputStream cannot be null");
 			checkNotNull(chunker, "chunker cannot be null");
 		}
-		
+
 		public XmlChunkerQueuePopulator build() {
 			validate();
 			defaultSaxParserIfNull();
-			return new XmlChunkerQueuePopulator(chunker, saxParser, inputStream);
+			return new XmlChunkerQueuePopulator(this);
 		}
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}

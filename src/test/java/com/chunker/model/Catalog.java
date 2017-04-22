@@ -6,18 +6,18 @@ import java.util.List;
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder={})
+@XmlType(propOrder = {})
 @XmlRootElement(name = "CATALOG")
 public class Catalog {
 
-    @XmlElement(name = "CD")
-    protected List<Cd> cd;
+	@XmlElement(name = "CD")
+	protected List<Cd> cd;
 
 	public List<Cd> getCd() {
-        if (cd == null) {
-            cd = new ArrayList<>();
-        }
-        return this.cd;
+		if (cd == null) {
+			cd = new ArrayList<>();
+		}
+		return this.cd;
 	}
 
 }
