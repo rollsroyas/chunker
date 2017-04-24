@@ -1,0 +1,158 @@
+{
+ "CDS":[{
+   "INFOS":["Empire Burlesque","Bob Dylān","USA","Columbia"],
+   "PRICES":[10.90],
+   "YEARS":[1985],
+   "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Hide your heart","Bonnie Tylor","UK","CBS Records"],
+    "PRICES":[9.90],
+    "YEARS":[1988],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Greatest Hits","Dolly Parton","USA","RCA"],
+    "PRICES":[9.90],
+    "YEARS":[1982],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Still got the blues","Gary More","UK","Virgin redords"],
+    "PRICES":[10.20],
+    "YEARS":[1990],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Eros","Eros Ramazzotti","EU","BMG"],
+    "PRICES":[9.90],
+    "YEARS":[1997],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["One night only","Bee Gees","UK","Polydor"],
+    "PRICES":[10.90],
+    "YEARS":[1998],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Sylvias Mother","Dr.Hook","UK","CBS"],
+    "PRICES":[8.10],
+    "YEARS":[1973],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Maggie May","Rod Stewart","UK","Pickwick"],
+    "PRICES":[8.50],
+    "YEARS":[1990],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Romanza","Andrea Bocelli","EU","Polydor"],
+    "PRICES":[10.80],
+    "YEARS":[1996],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["When a man loves a woman","Percy Sledge","USA","Atlantic"],
+    "PRICES":[8.70],
+    "YEARS":[1987],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Black angel","Savage Rose","EU","Mega"],
+    "PRICES":[10.90],
+    "YEARS":[1995],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["1999 Grammy Nominees","Many","USA","Grammy"],
+    "PRICES":[10.20],
+    "YEARS":[1999],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["For the good times","Kenny Rogers","UK","Mucik Master"],
+    "PRICES":[8.70],
+    "YEARS":[1995],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Big Willie style","Will Smith","USA","Columbia"],
+    "PRICES":[9.90],
+    "YEARS":[1997],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Tupelo Honey","Van Morrison","UK","Polydor"],
+    "PRICES":[8.20],
+    "YEARS":[1971],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Soulsville","Jorn Hoel","Norway","WEA"],
+    "PRICES":[7.90],
+    "YEARS":[1996],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["The very best of","Cat Stevens","UK","Island"],
+    "PRICES":[8.90],
+    "YEARS":[1990],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Stop","Sam Brown","UK","A and M"],
+    "PRICES":[8.90],
+    "YEARS":[1988],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Bridge of Spies","T`Pau","UK","Siren"],
+    "PRICES":[7.90],
+    "YEARS":[1987],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Private Dancer","Tina Turner","UK","Capitol"],
+    "PRICES":[8.90],
+    "YEARS":[1983],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Midt om natten","Kim Larsen","EU","Medley"],
+    "PRICES":[7.80],
+    "YEARS":[1983],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Pavarotti Gala Concert","Luciano Pavarotti","UK","DECCA"],
+    "PRICES":[9.90],
+    "YEARS":[1991],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["The dock of the bay","Otis Redding","USA","Atlantic"],
+    "PRICES":[7.90],
+    "YEARS":[1987],
+    "FAVORITES":[false]
+  }
+  ,{
+    "INFOS":["Picture book","Simply Red","EU","Elektra"],
+    "PRICES":[7.20],
+    "YEARS":[1985],
+    "FAVORITES":null
+  }
+  ,{
+    "INFOS":["Red","The Communards","UK","London"],
+    "PRICES":[7.80],
+    "YEARS":[1987],
+    "FAVORITES":[true]
+  }
+  ,{
+    "INFOS":["Unchain my heart","Joe Cocker","USA","EMI"],
+    "PRICES":[8.20],
+    "YEARS":[1987],
+    "FAVORITES":[false]
+  }]
+}   
