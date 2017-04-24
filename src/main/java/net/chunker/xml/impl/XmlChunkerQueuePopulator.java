@@ -25,7 +25,7 @@ public class XmlChunkerQueuePopulator {
 
 	private XmlChunkerQueuePopulator(Builder builder) {
 		this.inputStream = builder.inputStream;
-		this.parser = builder.saxParser;
+		this.parser = builder.parser;
 		this.chunker = builder.chunker;
 	}
 
@@ -57,7 +57,7 @@ public class XmlChunkerQueuePopulator {
 
 	public static final class Builder {
 		private InputStream inputStream;
-		private SAXParser saxParser;
+		private SAXParser parser;
 		private XmlChunker chunker;
 
 		private Builder() {
@@ -77,8 +77,8 @@ public class XmlChunkerQueuePopulator {
 			return this;
 		}
 
-		public Builder parser(SAXParser saxParser) {
-			this.saxParser = saxParser;
+		public Builder parser(SAXParser parser) {
+			this.parser = parser;
 			return this;
 		}
 
@@ -87,13 +87,13 @@ public class XmlChunkerQueuePopulator {
 			return this;
 		}
 
-		private void defaultSaxParserIfNull() {
-			if (this.saxParser == null) {
+		private void defaultParserIfNull() {
+			if (this.parser == null) {
 				// Use the default (non-validating) parser
 				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 				saxFactory.setNamespaceAware(true);
 				try {
-					this.saxParser = saxFactory.newSAXParser();
+					this.parser = saxFactory.newSAXParser();
 				} catch (ParserConfigurationException | SAXException e) {
 					throw new IllegalStateException(e);
 				}
@@ -107,7 +107,7 @@ public class XmlChunkerQueuePopulator {
 
 		public XmlChunkerQueuePopulator build() {
 			validate();
-			defaultSaxParserIfNull();
+			defaultParserIfNull();
 			return new XmlChunkerQueuePopulator(this);
 		}
 	}

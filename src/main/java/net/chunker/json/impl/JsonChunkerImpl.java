@@ -120,22 +120,30 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	private void ifFirstMatchThenAddBeforeMatchEventsToCurrentEvents() {
 		if (!inMatchedArray && matcher.acceptName(currentName)) {
 			inMatchedArray = true;
-			currentEvents = new ArrayList<>(beforeMatchEvents);
+			initializeCurrentEventsWithBeforeMatchEvents();
 		}
+	}
+
+	private void initializeCurrentEventsWithBeforeMatchEvents() {
+		currentEvents = new ArrayList<>(beforeMatchEvents);
 	}
 
 	private void ifInMatchAndIfChunkCountEqualsChunkSizeThenProcessChunkAndResetCurrentEvents() {
 		if (inMatchedArray) {
 			if (chunkCount % chunkSize == 0) {
 				processCurrentEvents(false);
-				currentEvents = new ArrayList<>(beforeMatchEvents);
+				initializeCurrentEventsWithBeforeMatchEvents();
 			}
 			inMatchedArrayStartObjectEventCount++;
 		}
 	}
 
 	private void processCurrentEvents(final boolean lastChunk) {
-		if (chunkCount > 0) {
+		final boolean mustProcessBeforeMatchEvents = lastChunk && !inMatchedArray;
+		if (chunkCount > 0 || mustProcessBeforeMatchEvents) {
+			if (mustProcessBeforeMatchEvents) {
+				initializeCurrentEventsWithBeforeMatchEvents();
+			}
 			String text = currentEventsToChunk(lastChunk);
 
 			LOG.trace("Chunk text:\n{}", text);
@@ -149,7 +157,7 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	private String currentEventsToChunk(final boolean lastChunk) {
 		StringWriter stringWriter = new StringWriter();
 		try (JsonGenerator generator = Json.createGenerator(stringWriter)) {
-			applyEventsToGenerator(generator);
+			applyCurrentEventsToGenerator(generator);
 
 			if (!lastChunk) {
 				writeEndForStartEventsWithoutAnEndEvent(generator);
@@ -166,7 +174,7 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 		}
 	}
 
-	private void applyEventsToGenerator(JsonGenerator generator) {
+	private void applyCurrentEventsToGenerator(JsonGenerator generator) {
 		for (NamedEvent event : currentEvents) {
 			event.applyTo(generator);
 		}
@@ -222,7 +230,11 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	 */
 	@Override
 	public void setException(Exception e) {
-		this.exception = e;
+		if (exception == null) {
+			exception = e;
+		} else {
+			exception.addSuppressed(e);
+		}
 	}
 
 	/**
@@ -230,9 +242,13 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	 */
 	@Override
 	public void finish() {
-		processCurrentEvents(true);
-
-		donePuttingChunksOnQueue();
+		try {
+			processCurrentEvents(true);
+		} catch(RuntimeException e) {
+			setException(e);
+		} finally {
+			donePuttingChunksOnQueue();
+		}
 	}
 
 	private void donePuttingChunksOnQueue() {

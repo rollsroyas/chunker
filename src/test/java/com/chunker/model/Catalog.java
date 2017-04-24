@@ -11,13 +11,13 @@ import javax.xml.bind.annotation.*;
 public class Catalog {
 
 	@XmlElement(name = "CD")
-	protected List<Cd> cd;
+	private List<Cd> cds;
 
-	public List<Cd> getCd() {
-		if (cd == null) {
-			cd = new ArrayList<>();
+	public List<Cd> getCds() {
+		if (cds == null) {
+			cds = new ArrayList<>();
 		}
-		return this.cd;
+		return this.cds;
 	}
 
 }

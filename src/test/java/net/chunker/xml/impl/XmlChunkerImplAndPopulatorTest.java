@@ -1,6 +1,8 @@
-package net.chunker.xml.api;
+package net.chunker.xml.impl;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,19 +14,20 @@ import java.util.concurrent.Callable;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.chunker.util.MemoryManagerImpl;
-import net.chunker.xml.impl.XmlChunkerImpl;
-import net.chunker.xml.impl.XmlChunkerImpl.Builder;
-import net.chunker.xml.impl.XmlChunkerQueuePopulator;
-import net.chunker.xml.impl.XmlElementMatcherImpl;
-
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import com.chunker.model.Catalog;
 import com.chunker.model.Cd;
 import com.chunker.xml.impl.CdChunkFactoryImpl;
+
+import net.chunker.util.MemoryManagerImpl;
+import net.chunker.xml.api.XmlChunker;
+import net.chunker.xml.api.XmlElementMatcher;
+import net.chunker.xml.impl.XmlChunkerImpl.Builder;
 
 /**
  * As of 01Nov2016, the pom.xml was updated to run the tests with
@@ -35,9 +38,65 @@ import com.chunker.xml.impl.CdChunkFactoryImpl;
  * @author rollsroyas@alumni.ncsu.edu
  *
  */
-public class XmlChunkerTest {
+public class XmlChunkerImplAndPopulatorTest {
 	private static final int XML_REPEATED_ELEMENTS_SIZE = 26;
 
+	@Test
+	public void isBlankCharSeq_Empty() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(""));
+	}
+	
+	@Test
+	public void isBlankCharSeq_Null() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank((String)null));
+	}
+	
+	@Test
+	public void isBlankCharSeq_Space() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(" "));
+	}
+	
+	@Test
+	public void isBlankCharSeq_MultipleWs() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(" \t"));
+	}
+	
+	@Test
+	public void isBlankCharSeq_NotBlank() throws Exception {
+		assertFalse("Expected empty string to be blank", XmlChunkerImpl.isBlank("NotBlank"));
+	}
+	
+	@Test
+	public void isBlankText_Empty() throws Exception {		
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(text("")));
+	}
+
+	private Text text(String wholeText) {
+		Text text = Mockito.mock(Text.class);
+		Mockito.when(text.getWholeText()).thenReturn(wholeText);
+		return text;
+	}
+	
+	@Test
+	public void isBlankText_Null() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(text(null)));
+	}
+	
+	@Test
+	public void isBlankText_Space() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(text(" ")));
+	}
+	
+	@Test
+	public void isBlankText_MultipleWs() throws Exception {
+		assertTrue("Expected empty string to be blank", XmlChunkerImpl.isBlank(text(" \t")));
+	}
+	
+	@Test
+	public void isBlankText_NotBlank() throws Exception {
+		assertFalse("Expected empty string to be blank", XmlChunkerImpl.isBlank(text("NotBlank")));
+	}
+	
 	@Test
 	public void chunkSizeDefault() throws Exception {
 		testChunk();
@@ -60,15 +119,16 @@ public class XmlChunkerTest {
 		// setting these values low to force a GC
 		MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
 		Builder<Catalog> builder = XmlChunkerImpl.<Catalog>builder();
-		if (chunkSize != null)
+		if (chunkSize != null) {
 			builder.chunkSize(chunkSize);
+		}
 		XmlChunker chunker = builder.queue(queue)
 			.matcher(matcher)
 			.factory(factory)
 			.memoryManager(memoryManager)
 			.build();
 
-		InputStream inputStream = XmlChunkerTest.class.getResourceAsStream("/xml/cd_catalog.xml");
+		InputStream inputStream = XmlChunkerImplAndPopulatorTest.class.getResourceAsStream("/xml/cd_catalog.xml");
 		XmlChunkerQueuePopulator.builder()
 			.chunker(chunker)
 			.inputStream(inputStream)
@@ -83,10 +143,9 @@ public class XmlChunkerTest {
 		Callable<Catalog> callable;
 		Catalog catalog;
 		// while ((catalog=queue.take().call()) != null) {
-		// Polling prevents one from potentially getting into an infinite wait
-		// condition
+		// Polling prevents a potential infinite wait condition
 		while ((callable = queue.poll(5, SECONDS)) != null && (catalog = callable.call()) != null) {
-			List<Cd> cds = catalog.getCd();
+			List<Cd> cds = catalog.getCds();
 			numChunks++;
 			Assert.assertTrue("lte chunk size of " + chunkSize, cds.size() <= chunkSize.intValue());
 		}

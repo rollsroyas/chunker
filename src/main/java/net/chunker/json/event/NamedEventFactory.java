@@ -46,9 +46,9 @@ public final class NamedEventFactory {
 		case END_OBJECT:
 			return new NamedEndEvent();
 		case VALUE_FALSE:
-			return new NamedBooleanEvent(currentName, false);
+			return new NamedFalseEvent(currentName);
 		case VALUE_TRUE:
-			return new NamedBooleanEvent(currentName, true);
+			return new NamedTrueEvent(currentName);
 		case VALUE_NULL:
 			return new NamedNullEvent(currentName);
 		case VALUE_NUMBER:

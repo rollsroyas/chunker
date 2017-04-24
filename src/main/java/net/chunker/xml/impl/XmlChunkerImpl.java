@@ -161,7 +161,8 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 	}
 
 	private void copyAttributesToElement(Attributes attrs, Element elem) {
-		for (int i = 0; i < attrs.getLength(); ++i) {
+		final int length = attrs.getLength();
+		for (int i = 0; i < length; i++) {
 			String nsUri = attrs.getURI(i);
 			String qname = attrs.getQName(i);
 			String value = attrs.getValue(i);
@@ -171,7 +172,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 		}
 	}
 
-	private static boolean isBlank(final CharSequence cs) {
+	static boolean isBlank(final CharSequence cs) {
 		final int length;
 		if (cs == null || (length = cs.length()) == 0) {
 			return true;
@@ -184,7 +185,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 		return true;
 	}
 
-	private boolean isBlank(Node node) {
+	static boolean isBlank(Node node) {
 		if (node instanceof Text) {
 			Text text = (Text) node;
 			return isBlank(text.getWholeText());
@@ -370,7 +371,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 			checkNotNull(factory, "factory cannot be null");
 		}
 
-		public XmlChunker build() {
+		public XmlChunkerImpl<A> build() {
 			validate();
 			defaultTransformerIfNull();
 			defaultDocumentIfNull();

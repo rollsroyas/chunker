@@ -73,7 +73,7 @@ public class MemoryManagerImpl implements MemoryManager {
 		}
 	}
 
-	private static final String formatLong(final long l) {
+	static final String formatLong(final long l) {
 		String s = Long.toString(Math.abs(l));
 		final int sLength = s.length();
 

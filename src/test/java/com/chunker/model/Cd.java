@@ -6,23 +6,22 @@ import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {})
-@XmlRootElement(name = "CD")
 public class Cd {
 
 	@XmlElement(name = "TITLE")
-	protected String title;
+	private String title;
 	@XmlElement(name = "ARTIST")
-	protected String artist;
+	private String artist;
 	@XmlElement(name = "COUNTRY")
-	protected String country;
+	private String country;
 	@XmlElement(name = "COMPANY")
-	protected String company;
+	private String company;
 	@XmlElement(name = "PRICE")
-	protected BigDecimal price;
+	private BigDecimal price;
 	@XmlElement(name = "YEAR")
-	protected Integer year;
-	@XmlElement(name = "FAVORITE")
-	protected Boolean favorite;
+	private Integer year;
+	@XmlAttribute(name = "FAVORITE")
+	private Boolean favorite;
 
 	public String getTitle() {
 		return title;

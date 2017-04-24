@@ -17,19 +17,25 @@ public class MonitoredInputStreamTest {
 
 	@Test
 	public void read() throws IOException {
+		long expectedProgress = 0;
 		try (MonitoredInputStream in = getInputStream()) {
-			in.read();
-			assertEquals(1, in.getProgress());
+			while (in.read() != -1) {
+				assertEquals(++expectedProgress, in.getProgress());
+			}
 		}
 	}
 
 	@Test
 	public void bufferedRead() throws IOException {
 		final int size = 2;
+		long expectedProgress = 0;
 		byte[] b = new byte[size];
 		try (MonitoredInputStream in = getInputStream()) {
-			in.read(b, 0, size);
-			assertEquals(size, in.getProgress());
+			int bytesRead;
+			while ((bytesRead = in.read(b, 0, size)) != -1) {
+				expectedProgress += bytesRead;
+				assertEquals(expectedProgress, in.getProgress());
+			}
 		}
 	}
 
@@ -41,12 +47,23 @@ public class MonitoredInputStreamTest {
 			assertEquals(skip, in.getProgress());
 		}
 	}
+	
+	@Test
+	public void skip_zero() throws IOException {
+		final long skip = 0;
+		try (MonitoredInputStream in = getInputStream()) {
+			in.skip(skip);
+			assertEquals(skip, in.getProgress());
+		}
+	}
 
 	@Test
 	public void markReadRest() throws IOException {
 		try (MonitoredInputStream in = getInputStream()) {
 			in.mark(10);
 			in.read();
+			in.reset();
+			assertEquals(0, in.getProgress());
 			in.reset();
 			assertEquals(0, in.getProgress());
 		}

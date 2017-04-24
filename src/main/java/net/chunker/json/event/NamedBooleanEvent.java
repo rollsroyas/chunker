@@ -9,7 +9,7 @@ import org.pojomatic.annotations.AutoProperty;
  * @author rollsroyas@alumni.ncsu.edu
  */
 @AutoProperty
-public class NamedBooleanEvent extends NamedEvent {
+public abstract class NamedBooleanEvent extends NamedEvent {
 
 	final boolean bool;
 

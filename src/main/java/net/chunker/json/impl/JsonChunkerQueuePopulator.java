@@ -4,7 +4,6 @@ import static net.chunker.util.Validations.checkNotBothNull;
 import static net.chunker.util.Validations.checkNotBothPresent;
 import static net.chunker.util.Validations.checkNotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.json.Json;
@@ -44,8 +43,7 @@ public class JsonChunkerQueuePopulator {
 						}
 					}
 				} catch (final Exception e) {
-					chunker.setException(new IOException("Error around byte #" + parser.getLocation()
-						.getStreamOffset(), e));
+					chunker.setException(e);
 				} finally {
 					chunker.finish();
 				}
