@@ -1,23 +1,54 @@
 package net.chunker.json.event;
 
+import static org.mockito.Mockito.verify;
+
 import com.chunker.BasePojomaticTest;
 
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
-public class NamedStartArrayEventTest extends BasePojomaticTest<NamedStartArrayEvent> {
+public class NamedStartArrayEventTest extends BaseNamedEventTest<NamedStartArrayEvent> {
 
 	/**
-	 * @see BasePojomaticTest#construct()
+	 * @see BasePojomaticTest#expectedToString()
 	 */
 	@Override
-	public NamedStartArrayEvent construct() {
+	protected String expectedToString() {
+		return "NamedStartArrayEvent{name: {name}}";
+	}
+
+	/**
+	 * @see BaseNamedEventTest#construct_NameNotNull()
+	 */
+	@Override
+	protected NamedStartArrayEvent construct_NameNotNull() {
 		return new NamedStartArrayEvent("name");
 	}
 
+	/**
+	 * @see BaseNamedEventTest#construct_NameNull()
+	 */
 	@Override
-	public String expectedToString() {
-		return "NamedStartArrayEvent{name: {name}}";
+	protected NamedStartArrayEvent construct_NameNull() {
+		return new NamedStartArrayEvent(null);
+	}
+
+	/**
+	 * @see BaseNamedEventTest#verifyApplyTo_NameNotNull()
+	 */
+	@Override
+	protected
+	void verifyApplyTo_NameNotNull() {
+		verify(generator).writeStartArray("name");
+	}
+
+	/**
+	 * @see BaseNamedEventTest#verifyApplyTo_NameNull()
+	 */
+	@Override
+	protected
+	void verifyApplyTo_NameNull() {
+		verify(generator).writeStartArray();
 	}
 
 }

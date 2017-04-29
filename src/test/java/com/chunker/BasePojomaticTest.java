@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class BasePojomaticTest<T> {
 
-	abstract public T construct();
+	protected abstract T construct();
 
-	abstract public String expectedToString();
+	protected abstract String expectedToString();
 
 	@Test
 	public void testEquals() {

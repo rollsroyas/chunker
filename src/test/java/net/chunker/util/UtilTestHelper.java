@@ -1,10 +1,10 @@
 package net.chunker.util;
 
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-
-import org.junit.Assert;
 
 public final class UtilTestHelper {
 
@@ -15,7 +15,7 @@ public final class UtilTestHelper {
 		Constructor<?> constructor = clazz.getDeclaredConstructor(new Class[0]);
 		constructor.setAccessible(true);
 	    constructor.newInstance(new Object[0]);
-	    Assert.assertTrue("Constructor should be private", Modifier.isPrivate(constructor.getModifiers()));
+	    assertTrue("Constructor should be private", Modifier.isPrivate(constructor.getModifiers()));
 	}
 
 }

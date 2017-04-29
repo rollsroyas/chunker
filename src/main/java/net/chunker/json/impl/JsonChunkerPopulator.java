@@ -14,17 +14,19 @@ import net.chunker.json.api.JsonChunker;
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
-public class JsonChunkerQueuePopulator {
+public class JsonChunkerPopulator {
 
 	private final JsonParser parser;
 	private final JsonChunker chunker;
 
-	private JsonChunkerQueuePopulator(Builder builder) {
+	private JsonChunkerPopulator(Builder builder) {
 		this.chunker = builder.chunker;
 		this.parser = builder.parser;
 	}
 
 	/**
+	 * Populates the JsonChunker in a new background thread.
+	 * 
 	 * The last element in the queue will we be a Callable whose call method
 	 * returns null or it will throw an exception if the sax parser threw one
 	 */
@@ -36,11 +38,9 @@ public class JsonChunkerQueuePopulator {
 		return new Runnable() {
 			@Override
 			public void run() {
-				try {
-					try (JsonParser jsonParser = parser) {
-						while (jsonParser.hasNext()) {
-							chunker.handleEvent(new JsonEventImpl(jsonParser));
-						}
+				try (JsonParser jsonParser = parser) {
+					while (jsonParser.hasNext()) {
+						chunker.handleEvent(new JsonEventImpl(jsonParser));
 					}
 				} catch (final Exception e) {
 					chunker.setException(e);
@@ -56,9 +56,9 @@ public class JsonChunkerQueuePopulator {
 	}
 
 	public static final class Builder {
-		private InputStream inputStream;
-		private JsonParser parser;
-		private JsonChunker chunker;
+		InputStream inputStream;
+		JsonParser parser;
+		JsonChunker chunker;
 
 		private Builder() {
 		}
@@ -97,10 +97,10 @@ public class JsonChunkerQueuePopulator {
 			checkNotNull(chunker, "chunker cannot be null");
 		}
 
-		public JsonChunkerQueuePopulator build() {
+		public JsonChunkerPopulator build() {
 			validate();
 			defaultParserIfNull();
-			return new JsonChunkerQueuePopulator(this);
+			return new JsonChunkerPopulator(this);
 		}
 	}
 }

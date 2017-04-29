@@ -238,6 +238,9 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	}
 
 	/**
+	 * The last element in the queue will we be a Callable whose call method
+	 * returns null or it will throw an exception if the sax parser threw one
+	 *
 	 * @see JsonChunker#finish()
 	 */
 	@Override

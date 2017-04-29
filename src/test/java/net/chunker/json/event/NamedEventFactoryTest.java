@@ -40,18 +40,18 @@ public final class NamedEventFactoryTest {
 		createNamedEventForEventThenAssertInstanceOfClass(Event.START_ARRAY, NamedStartArrayEvent.class);
 	}
 
-	public NamedEvent createNamedEventForEventThenAssertInstanceOfClass(Event event, Class<? extends NamedEvent> clazz) {
+	private NamedEvent createNamedEventForEventThenAssertInstanceOfClass(Event event, Class<? extends NamedEvent> clazz) {
 		NamedEvent namedEvent = createNamedEventForEvent(event);
 		assertObjectInstanceOfClass(namedEvent, clazz);
 		return namedEvent;
 	}
 
-	public void assertObjectInstanceOfClass(Object o, Class<?> clazz) {
+	private void assertObjectInstanceOfClass(Object o, Class<?> clazz) {
 		assertNotNull(o);
 		assertEquals(clazz, o.getClass());
 	}
 
-	public NamedEvent createNamedEventForEvent(Event event) {
+	private NamedEvent createNamedEventForEvent(Event event) {
 		when(jsonEvent.getEvent()).thenReturn(event);
 		NamedEvent namedEvent = namedEventFactory().create(jsonEvent, "currentName");
 		return namedEvent;

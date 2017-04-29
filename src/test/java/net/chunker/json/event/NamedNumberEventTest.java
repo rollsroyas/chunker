@@ -1,5 +1,7 @@
 package net.chunker.json.event;
 
+import static org.mockito.Mockito.verify;
+
 import java.math.BigDecimal;
 
 import javax.json.stream.JsonParser.Event;
@@ -11,7 +13,7 @@ import net.chunker.json.api.JsonEvent;
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
-public class NamedNumberEventTest extends BasePojomaticTest<NamedNumberEvent> {
+public class NamedNumberEventTest extends BaseNamedEventTest<NamedNumberEvent> {
 
 	private static final JsonEvent EVENT = new JsonEvent() {
 
@@ -37,7 +39,7 @@ public class NamedNumberEventTest extends BasePojomaticTest<NamedNumberEvent> {
 
 		@Override
 		public BigDecimal getBigDecimal() {
-			return null;
+			return BigDecimal.ZERO;
 		}
 
 		@Override
@@ -47,16 +49,45 @@ public class NamedNumberEventTest extends BasePojomaticTest<NamedNumberEvent> {
 	};
 
 	/**
-	 * @see BasePojomaticTest#construct()
+	 * @see BasePojomaticTest#expectedToString()
 	 */
 	@Override
-	public NamedNumberEvent construct() {
+	protected String expectedToString() {
+		return "NamedNumberEvent{name: {name}, event: {event}}";
+	}
+
+	/**
+	 * @see BaseNamedEventTest#construct_NameNotNull()
+	 */
+	@Override
+	protected NamedNumberEvent construct_NameNotNull() {
 		return new NamedNumberEvent("name", EVENT);
 	}
 
+	/**
+	 * @see BaseNamedEventTest#construct_NameNull()
+	 */
 	@Override
-	public String expectedToString() {
-		return "NamedNumberEvent{name: {name}, event: {event}}";
+	protected NamedNumberEvent construct_NameNull() {
+		return new NamedNumberEvent(null, EVENT);
+	}
+
+	/**
+	 * @see BaseNamedEventTest#verifyApplyTo_NameNotNull()
+	 */
+	@Override
+	protected
+	void verifyApplyTo_NameNotNull() {
+		verify(generator).write("name", EVENT.getBigDecimal());
+	}
+
+	/**
+	 * @see BaseNamedEventTest#verifyApplyTo_NameNull()
+	 */
+	@Override
+	protected
+	void verifyApplyTo_NameNull() {
+		verify(generator).write( EVENT.getBigDecimal());
 	}
 
 }

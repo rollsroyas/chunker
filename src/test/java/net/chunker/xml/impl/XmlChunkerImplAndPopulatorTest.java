@@ -1,6 +1,7 @@
 package net.chunker.xml.impl;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,9 +15,9 @@ import java.util.concurrent.Callable;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
@@ -98,6 +99,11 @@ public class XmlChunkerImplAndPopulatorTest {
 	}
 	
 	@Test
+	public void isBlankNonText() throws Exception {
+		assertFalse("Expected non-Text node to return false", XmlChunkerImpl.isBlank(Mockito.mock(Node.class)));
+	}
+	
+	@Test
 	public void chunkSizeDefault() throws Exception {
 		testChunk();
 	}
@@ -129,7 +135,7 @@ public class XmlChunkerImplAndPopulatorTest {
 			.build();
 
 		InputStream inputStream = XmlChunkerImplAndPopulatorTest.class.getResourceAsStream("/xml/cd_catalog.xml");
-		XmlChunkerQueuePopulator.builder()
+		XmlChunkerPopulator.builder()
 			.chunker(chunker)
 			.inputStream(inputStream)
 			.build()
@@ -147,8 +153,8 @@ public class XmlChunkerImplAndPopulatorTest {
 		while ((callable = queue.poll(5, SECONDS)) != null && (catalog = callable.call()) != null) {
 			List<Cd> cds = catalog.getCds();
 			numChunks++;
-			Assert.assertTrue("lte chunk size of " + chunkSize, cds.size() <= chunkSize.intValue());
+			assertTrue("lte chunk size of " + chunkSize, cds.size() <= chunkSize.intValue());
 		}
-		Assert.assertEquals(((XML_REPEATED_ELEMENTS_SIZE - 1) / chunkSize) + 1, numChunks);
+		assertEquals(((XML_REPEATED_ELEMENTS_SIZE - 1) / chunkSize) + 1, numChunks);
 	}
 }

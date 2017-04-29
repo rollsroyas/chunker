@@ -1,5 +1,7 @@
 package net.chunker.xml.impl;
 
+import static net.chunker.util.Validations.checkNotNull;
+
 import net.chunker.xml.api.XmlElementMatcher;
 
 /**
@@ -12,7 +14,7 @@ public class XmlElementMatcherImpl implements XmlElementMatcher {
 
 	public XmlElementMatcherImpl(String namespaceURI, String name) {
 		this.namespaceURI = namespaceURI;
-		this.name = name;
+		this.name = checkNotNull(name, "name cannot be null");
 	}
 
 	public XmlElementMatcherImpl(String name) {

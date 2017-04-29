@@ -13,7 +13,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -148,7 +147,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 
 	}
 
-	protected void removeNodesForTheChunkFromCurrentNode() {
+	private void removeNodesForTheChunkFromCurrentNode() {
 		NodeList list = currentNode.getChildNodes();
 		for (int i = list.getLength() - 1; i >= 0; i--) {
 			Node node = list.item(i);
@@ -289,12 +288,12 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 	}
 
 	public static final class Builder<A> {
-		private MemoryManager memoryManager;
-		private BlockingQueue<Callable<A>> queue;
-		private XmlElementMatcher matcher;
-		private XmlChunkFactory<A> factory;
-		private Transformer transformer;
-		private Document document;
+		MemoryManager memoryManager;
+		BlockingQueue<Callable<A>> queue;
+		XmlElementMatcher matcher;
+		XmlChunkFactory<A> factory;
+		Transformer transformer;
+		Document document;
 		int chunkSize;
 
 		private Builder() {
@@ -341,7 +340,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 				try {
 					this.transformer = TransformerFactory.newInstance()
 						.newTransformer();
-				} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
+				} catch (TransformerConfigurationException e) {
 					throw new IllegalStateException(e);
 				}
 			}

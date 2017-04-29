@@ -68,12 +68,12 @@ public class JsonEventImplTest extends BasePojomaticTest<JsonEventImpl> {
 	 * @see BasePojomaticTest#construct()
 	 */
 	@Override
-	public JsonEventImpl construct() {
+	protected JsonEventImpl construct() {
 		return new JsonEventImpl(PARSER);
 	}
 
 	@Override
-	public String expectedToString() {
+	protected String expectedToString() {
 		return "JsonEventImpl{event: {KEY_NAME}, string: {string}, number: {null}, integer: {0}, integralNumber: {false}}";
 	}
 

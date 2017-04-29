@@ -17,19 +17,21 @@ import net.chunker.xml.api.XmlChunker;
 /**
  * @author rollsroyas@alumni.ncsu.edu
  */
-public class XmlChunkerQueuePopulator {
+public class XmlChunkerPopulator {
 
 	private final InputStream inputStream;
 	private final SAXParser parser;
 	private final XmlChunker chunker;
 
-	private XmlChunkerQueuePopulator(Builder builder) {
+	private XmlChunkerPopulator(Builder builder) {
 		this.inputStream = builder.inputStream;
 		this.parser = builder.parser;
 		this.chunker = builder.chunker;
 	}
 
 	/**
+	 * Populates the XmlChunker in a new background thread.
+	 * 
 	 * The last element in the queue will we be a Callable whose call method
 	 * returns null or it will throw an exception if the sax parser threw one
 	 */
@@ -56,9 +58,9 @@ public class XmlChunkerQueuePopulator {
 	}
 
 	public static final class Builder {
-		private InputStream inputStream;
-		private SAXParser parser;
-		private XmlChunker chunker;
+		InputStream inputStream;
+		SAXParser parser;
+		XmlChunker chunker;
 
 		private Builder() {
 		}
@@ -105,10 +107,10 @@ public class XmlChunkerQueuePopulator {
 			checkNotNull(chunker, "chunker cannot be null");
 		}
 
-		public XmlChunkerQueuePopulator build() {
+		public XmlChunkerPopulator build() {
 			validate();
 			defaultParserIfNull();
-			return new XmlChunkerQueuePopulator(this);
+			return new XmlChunkerPopulator(this);
 		}
 	}
 

@@ -22,9 +22,6 @@ import net.chunker.util.MemoryManagerImpl;
 public abstract class BaseJsonChunkerImplAndPopulatorTest<A> {
 	private static final int JSON_ARRAY_SIZE = 26;
 
-	public BaseJsonChunkerImplAndPopulatorTest() {
-		super();
-	}
 	@Test
 	public void chunkSizeDefault() throws Exception {
 		testChunk();
@@ -68,7 +65,7 @@ public abstract class BaseJsonChunkerImplAndPopulatorTest<A> {
 		JsonChunker chunker = builder.build();
 
 		InputStream inputStream = getInputStream();
-		JsonChunkerQueuePopulator.builder()
+		JsonChunkerPopulator.builder()
 			.chunker(chunker)
 			.inputStream(inputStream)
 			.build()
@@ -80,11 +77,11 @@ public abstract class BaseJsonChunkerImplAndPopulatorTest<A> {
 
 		int numChunks = 0;
 		Callable<A> callable;
-		A catalog;
+		A parent;
 		// while ((catalog=queue.take().call()) != null) {
 		// Polling prevents a potential infinite wait condition
-		while ((callable = queue.poll(5, SECONDS)) != null && (catalog = callable.call()) != null) {
-			int size = getSize(catalog);
+		while ((callable = queue.poll(5, SECONDS)) != null && (parent = callable.call()) != null) {
+			int size = getSize(parent);
 			if (unmatched) {
 				assertEquals("Expecting unmatched chunk size to equal total size", JSON_ARRAY_SIZE, size);
 			} else {

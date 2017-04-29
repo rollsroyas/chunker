@@ -11,12 +11,15 @@ public class NamedEndEventTest extends BasePojomaticTest<NamedEndEvent> {
 	 * @see BasePojomaticTest#construct()
 	 */
 	@Override
-	public NamedEndEvent construct() {
+	protected NamedEndEvent construct() {
 		return new NamedEndEvent();
 	}
 
+	/**
+	 * @see BasePojomaticTest#expectedToString()
+	 */
 	@Override
-	public String expectedToString() {
+	protected String expectedToString() {
 		return "NamedEndEvent{name: {null}}";
 	}
 }

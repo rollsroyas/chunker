@@ -26,13 +26,13 @@ public class JsonChunkerImplBuilderTest {
 	private static BlockingQueue<Callable<Object>> QUEUE = new ArrayBlockingQueue<>(1);
 
 	@Test
-	public void testDefaultChunkSize() {
+	public void buildDefaultChunkSize() {
 		JsonChunkerImpl.Builder<Object> builder = JsonChunkerImpl.builder();
 		assertEquals(1, builder.chunkSize);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testQueueNull() {
+	public void buildQueueNull() {
 		JsonChunkerImpl.builder()
 			.factory(FACTORY)
 			.matcher(MATCHER)
@@ -40,7 +40,7 @@ public class JsonChunkerImplBuilderTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testMatcherNull() {
+	public void buildMatcherNull() {
 		JsonChunkerImpl.builder()
 			.factory(FACTORY)
 			.queue(QUEUE)
@@ -48,7 +48,7 @@ public class JsonChunkerImplBuilderTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void testFactoryNull() {
+	public void buildFactoryNull() {
 		JsonChunkerImpl.builder()
 			.matcher(MATCHER)
 			.queue(QUEUE)
