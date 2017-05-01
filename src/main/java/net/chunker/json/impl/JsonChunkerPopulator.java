@@ -65,20 +65,31 @@ public class JsonChunkerPopulator {
 
 		/**
 		 * @param inputStream
-		 *            Strongly recommended to wrap this InputStream in a
-		 *            java.io.BufferedInputStream
-		 * @return Builder returns this Builder so that one can chain the calls
+		 * 			An inputStream or parser is required, but do not supply both.
+		 *			Strongly recommended to wrap this InputStream in a
+		 *			java.io.BufferedInputStream.
+		 * @return this
 		 */
 		public Builder inputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 			return this;
 		}
 
+		/**
+		 * @param parser
+		 * 			An inputStream or parser is required, but do not supply both.
+		 * @return this
+		 */
 		public Builder parser(JsonParser parser) {
 			this.parser = parser;
 			return this;
 		}
 
+		/**
+		 * @param chunker
+		 * 			This required object gathers the JSON events and creates chunks
+		 * @return this
+		 */
 		public Builder chunker(JsonChunker chunker) {
 			this.chunker = chunker;
 			return this;

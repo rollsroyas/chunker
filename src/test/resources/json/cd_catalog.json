@@ -1,4 +1,5 @@
 {
+ "TEST":"Need an event before the repeated array that is not a start array or start object",
  "CDS":[{
    "TITLE":"Empire Burlesque",
    "ARTIST":"Bob Dylān",

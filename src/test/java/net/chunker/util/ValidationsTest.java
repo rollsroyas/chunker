@@ -2,8 +2,8 @@ package net.chunker.util;
 
 import static net.chunker.util.UtilTestHelper.invokeAndAssertPrivateConstuctor;
 import static net.chunker.util.Validations.checkNotBothNull;
-import static net.chunker.util.Validations.checkNotNull;
 import static net.chunker.util.Validations.checkNotBothPresent;
+import static net.chunker.util.Validations.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;

@@ -1,8 +1,8 @@
 package net.chunker.json.event;
 
 import static net.chunker.json.event.NamedEventFactory.namedEventFactory;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 

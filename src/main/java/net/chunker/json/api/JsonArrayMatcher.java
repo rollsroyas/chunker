@@ -10,5 +10,5 @@ public interface JsonArrayMatcher {
 	 *            If the array is not named then this parameter will be null
 	 * @return true if this is the array to chunk, otherwise false
 	 */
-	boolean acceptName(String name);
+	boolean acceptsName(String name);
 }

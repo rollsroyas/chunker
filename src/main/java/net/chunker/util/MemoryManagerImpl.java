@@ -17,8 +17,21 @@ public class MemoryManagerImpl implements MemoryManager {
 	private final int numberOfCallsBetweenToleranceChecks;
 	private final Runtime rt;
 
+	/**
+	 * @param numberOfCallsBetweenToleranceChecks
+	 * 			To increase throughput, then make this number larger.
+	 * 			However bigger the number the greater the risk of an {@link OutOfMemoryError}.
+	 * @param memoryTolerance
+	 * 			Expects a value between 0 and 1, which represents the percentage 
+	 * 			of maxMemory that must be allocated before this instance
+	 * 			will do the {@link Runtime} combo gc(), runFinalization(), gc()
+	 */
 	public MemoryManagerImpl(final int numberOfCallsBetweenToleranceChecks, final double memoryTolerance) {
-		rt = Runtime.getRuntime();
+		this(Runtime.getRuntime(), numberOfCallsBetweenToleranceChecks, memoryTolerance);
+	}
+	
+	MemoryManagerImpl(final Runtime rt, final int numberOfCallsBetweenToleranceChecks, final double memoryTolerance) {
+		this.rt = rt;
 		this.maxMemory = rt.maxMemory();
 		if (this.maxMemory == Long.MAX_VALUE) {
 			this.gcCount = Integer.MIN_VALUE;
@@ -26,6 +39,13 @@ public class MemoryManagerImpl implements MemoryManager {
 		this.memoryTolerance = memoryTolerance;
 		this.numberOfCallsBetweenToleranceChecks = numberOfCallsBetweenToleranceChecks;
 		this.numberOfCallsSinceToleranceCheck = 0;
+	}
+
+	/**
+	 * @return int The number of times this instance invoked the Runtime combo gc(), runFinalization(), gc().
+	 */
+	public int getGcCount() {
+		return gcCount;
 	}
 
 	/**
@@ -56,19 +76,22 @@ public class MemoryManagerImpl implements MemoryManager {
 	}
 
 	private void gc() {
+		final long beforeUsedMemory = rt.totalMemory() - rt.freeMemory();
 		this.gcCount++;
 		rt.gc();
 		rt.runFinalization();
 		rt.gc();
+		final long afterUsedMemory = rt.totalMemory() - rt.freeMemory();
 
 		if (LOG.isTraceEnabled()) {
+			
 			LOG.trace(	"After ChunkTransformer called gc()\tUsed:\t{}\tMax:\t{}",
-						formatLong(rt.totalMemory() - rt.freeMemory()), formatLong(this.maxMemory));
+						formatLong(afterUsedMemory), formatLong(this.maxMemory));
 		}
 
 		// if that does not cause the memory to get released,
 		// then don't bother doing it again
-		if (isMemoryUsageHigh(rt)) {
+		if (afterUsedMemory >= beforeUsedMemory) {
 			this.gcCount = -this.gcCount;
 		}
 	}

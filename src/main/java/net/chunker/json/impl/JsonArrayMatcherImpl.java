@@ -14,10 +14,10 @@ public class JsonArrayMatcherImpl implements JsonArrayMatcher {
 	}
 
 	/**
-	 * @see JsonArrayMatcher#acceptName(String)
+	 * @see JsonArrayMatcher#acceptsName(String)
 	 */
 	@Override
-	public boolean acceptName(String name) {
+	public boolean acceptsName(String name) {
 		return this.name.equals(name);
 	}
 

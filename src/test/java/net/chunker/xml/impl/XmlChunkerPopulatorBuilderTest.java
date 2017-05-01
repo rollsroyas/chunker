@@ -1,6 +1,8 @@
 package net.chunker.xml.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 
@@ -21,10 +23,13 @@ public class XmlChunkerPopulatorBuilderTest {
 
 	private static InputStream INPUT_STREAM = XmlChunkerPopulatorBuilderTest.class
 		.getResourceAsStream("/xml/cd_catalog.xml");
+	
+	private static SAXParserFactory PARSER_FACTORY =  SAXParserFactory.newInstance();
+	
 	private static SAXParser PARSER;
 	{
 		try {
-			PARSER = SAXParserFactory.newInstance().newSAXParser();
+			PARSER = PARSER_FACTORY.newSAXParser();
 		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
@@ -60,6 +65,40 @@ public class XmlChunkerPopulatorBuilderTest {
 		assertEquals(INPUT_STREAM, builder.inputStream);
 	}
 	
+	@Test
+	public void buildChunkerInputStreamAndParserFactoryNotNull() {
+		final Builder builder = XmlChunkerPopulator.builder()
+			.chunker(CHUNKER)
+			.inputStream(INPUT_STREAM)
+			.parserFactory(PARSER_FACTORY);
+		builder.build();
+		assertEquals(CHUNKER, builder.chunker);
+		assertEquals(INPUT_STREAM, builder.inputStream);
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void buildChunkerInputStreamParserFactoryAndParserNotNull() {
+		XmlChunkerPopulator.builder()
+			.chunker(CHUNKER)
+			.inputStream(INPUT_STREAM)
+			.parserFactory(PARSER_FACTORY)
+			.parser(PARSER)
+			.build();
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void buildChunkerInputStreamAndParserFactoryNotNullThrowsException() 
+			throws ParserConfigurationException, SAXException {
+		SAXParserFactory parserFactory = mock(SAXParserFactory.class);
+		when(parserFactory.newSAXParser()).thenThrow(new ParserConfigurationException());
+		
+		XmlChunkerPopulator.builder()
+			.chunker(CHUNKER)
+			.inputStream(INPUT_STREAM)
+			.parserFactory(parserFactory)
+			.build();
+	}
+	
 	@Test(expected = NullPointerException.class)
 	public void buildInputStreamNull() {
 		XmlChunkerPopulator.builder()
@@ -73,4 +112,5 @@ public class XmlChunkerPopulatorBuilderTest {
 			.inputStream(INPUT_STREAM)
 			.build();
 	}
+
 }

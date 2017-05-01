@@ -1,5 +1,6 @@
 package net.chunker.xml.impl;
 
+import static net.chunker.util.Validations.checkNotBothPresent;
 import static net.chunker.util.Validations.checkNotNull;
 
 import java.io.IOException;
@@ -59,6 +60,7 @@ public class XmlChunkerPopulator {
 
 	public static final class Builder {
 		InputStream inputStream;
+		SAXParserFactory parserFactory;
 		SAXParser parser;
 		XmlChunker chunker;
 
@@ -66,36 +68,59 @@ public class XmlChunkerPopulator {
 		}
 
 		/**
-		 * Strongly recommended to wrap this InputStream in a
-		 * java.io.BufferedInputStream
-		 * 
 		 * @param inputStream
-		 *            Strongly recommended to wrap this InputStream in a
-		 *            java.io.BufferedInputStream
-		 * @return this Builder so that one can chain the calls
+		 * 			Required object.
+		 *			Strongly recommended to wrap this InputStream in a
+		 *			java.io.BufferedInputStream
+		 * @return this
 		 */
 		public Builder inputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 			return this;
 		}
 
+		/**
+		 * @param parserFactory
+		 * 			A parser or parserFactory is required, but do not supply both.
+		 * @return this
+		 */
+		public Builder parserFactory(SAXParserFactory parserFactory) {
+			this.parserFactory = parserFactory;
+			return this;
+		}
+		
+		/**
+		 * @param parser
+		 * 			A parser or parserFactory is required, but do not supply both.
+		 * @return this
+		 */
 		public Builder parser(SAXParser parser) {
 			this.parser = parser;
 			return this;
 		}
 
+		/**
+		 * @param chunker
+		 * 			This required object gathers the SAX events and creates chunks
+		 * @return this
+		 */
 		public Builder chunker(XmlChunker chunker) {
 			this.chunker = chunker;
 			return this;
 		}
+		
+		private void defaultParserFactoryIfNull() {
+			if (this.parserFactory == null) {
+				// Use the default (non-validating) parser
+				this.parserFactory = SAXParserFactory.newInstance();
+				parserFactory.setNamespaceAware(true);
+			}
+		}
 
 		private void defaultParserIfNull() {
 			if (this.parser == null) {
-				// Use the default (non-validating) parser
-				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-				saxFactory.setNamespaceAware(true);
 				try {
-					this.parser = saxFactory.newSAXParser();
+					this.parser = this.parserFactory.newSAXParser();
 				} catch (ParserConfigurationException | SAXException e) {
 					throw new IllegalStateException(e);
 				}
@@ -105,10 +130,12 @@ public class XmlChunkerPopulator {
 		public void validate() {
 			checkNotNull(inputStream, "inputStream cannot be null");
 			checkNotNull(chunker, "chunker cannot be null");
+			checkNotBothPresent(parser, parserFactory, "parser and parserFactory cannot both be present");
 		}
 
 		public XmlChunkerPopulator build() {
 			validate();
+			defaultParserFactoryIfNull();
 			defaultParserIfNull();
 			return new XmlChunkerPopulator(this);
 		}

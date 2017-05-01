@@ -16,12 +16,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.chunker.util.Chunkers;
-import net.chunker.util.MemoryManager;
-import net.chunker.xml.api.XmlChunkFactory;
-import net.chunker.xml.api.XmlChunker;
-import net.chunker.xml.api.XmlElementMatcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -33,6 +27,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import net.chunker.util.Chunkers;
+import net.chunker.util.MemoryManager;
+import net.chunker.xml.api.XmlChunkFactory;
+import net.chunker.xml.api.XmlChunker;
+import net.chunker.xml.api.XmlElementMatcher;
 
 /**
  * This class assumes memory is limited and therefore provides a means to break
@@ -64,21 +64,6 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 
 	private Exception exception;
 
-	/**
-	 * @param queue
-	 *            Contains the chunks, Note that when the Callable returns null
-	 *            then there are no more chunks to process
-	 * @param factory
-	 *            Creates the chunks (Callables) that go on the queue
-	 * @param transformer
-	 *            Converts from DOM to String
-	 * @param document
-	 *            Stores the DOM for the current chunk
-	 * @param chunkSize
-	 *            The max number of elements in a chunk
-	 * @param memoryManager
-	 *            This functional interface will be invoked after every chunk
-	 */
 	private XmlChunkerImpl(Builder<A> builder) {
 		this.queue = builder.queue;
 		this.matcher = builder.matcher;
@@ -193,7 +178,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 	}
 
 	private boolean matchesExpectedNamespaceAndName(String namespaceURI, String sName) {
-		return matcher.acceptName(namespaceURI, sName);
+		return matcher.acceptsName(namespaceURI, sName);
 	}
 
 	/**
@@ -221,7 +206,7 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 		currentNode.appendChild(text);
 	}
 
-	private void doChunk(boolean last) throws SAXException {
+	void doChunk(boolean last) throws SAXException {
 		String text = null;
 		try {
 			// Uncommenting this sleep allowed me to proves the code is reading
@@ -300,36 +285,90 @@ public class XmlChunkerImpl<A> extends XmlChunker {
 			chunkSize = 1;
 		}
 
+		/**
+		 * @param queue
+		 *            Contains the chunks, Note that when the Callable returns null
+		 *            then there are no more chunks to process
+		 * @param factory
+		 *            Creates the chunks (Callables) that go on the queue
+		 * @param transformer
+		 *            Converts from DOM to String
+		 * @param document
+		 *            Stores the DOM for the current chunk
+		 * @param chunkSize
+		 *            The max number of elements in a chunk
+		 * @param memoryManager
+		 *            This functional interface will be invoked after every chunk
+		 */
+		/**
+		 * @param  chunkSize
+		 * 		The max number of repeated objects in a chunk, defaults to 1.
+		 * @return this
+		 */
 		public Builder<A> chunkSize(int chunkSize) {
 			this.chunkSize = chunkSize;
 			return this;
 		}
 
+		/**
+		 * @param transformer
+		 *			Defaulted if not supplied.
+		 *			Converts from DOM to String.
+		 * @return this
+		 */
 		public Builder<A> transformer(Transformer transformer) {
 			this.transformer = transformer;
 			return this;
 		}
 
+		/**
+		 * @param document
+		 * 			Defaulted if not supplied.
+		 * 			Stores the DOM for the current chunk
+		 * @return this
+		 */
 		public Builder<A> document(Document document) {
 			this.document = document;
 			return this;
 		}
 
+		/**
+		 * @param memoryManager
+		 * 		This optional functional interface, if present, will be invoked after every chunk
+		 * @return this
+		 */
 		public Builder<A> memoryManager(MemoryManager memoryManager) {
 			this.memoryManager = memoryManager;
 			return this;
 		}
 
+		/**
+		 * @param queue
+		 * 		This required object contains the chunks.
+		 *		Note that when the ({@link Callable}s) returns null
+		 *      then there are no more chunks to process.
+		 * @return this
+		 */
 		public Builder<A> queue(BlockingQueue<Callable<A>> queue) {
 			this.queue = queue;
 			return this;
 		}
 
+		/**
+		 * @param matcher
+		 * 		This required object, identifies the repeated elements to be chunked in a JSON array
+		 * @return this
+		 */
 		public Builder<A> matcher(XmlElementMatcher matcher) {
 			this.matcher = matcher;
 			return this;
 		}
 
+		/**
+		 * @param factory
+		 * 		This required object, creates the chunks ({@link Callable}s) that go on the queue
+		 * @return this
+		 */
 		public Builder<A> factory(XmlChunkFactory<A> factory) {
 			this.factory = factory;
 			return this;

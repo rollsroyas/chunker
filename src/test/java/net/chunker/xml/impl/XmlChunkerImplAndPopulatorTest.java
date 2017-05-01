@@ -122,16 +122,17 @@ public class XmlChunkerImplAndPopulatorTest {
 		BlockingQueue<Callable<Catalog>> queue = new ArrayBlockingQueue<Callable<Catalog>>(100);
 		XmlElementMatcher matcher = new XmlElementMatcherImpl("CD");
 		CdChunkFactoryImpl factory = new CdChunkFactoryImpl();
-		// setting these values low to force a GC
-		MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
 		Builder<Catalog> builder = XmlChunkerImpl.<Catalog>builder();
 		if (chunkSize != null) {
+			// Showing that memoryManager is not required
+			// Setting memoryTolerance low to force a GC, probably .8 would be a good default
+			MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
+			builder.memoryManager(memoryManager);
 			builder.chunkSize(chunkSize);
 		}
 		XmlChunker chunker = builder.queue(queue)
 			.matcher(matcher)
 			.factory(factory)
-			.memoryManager(memoryManager)
 			.build();
 
 		InputStream inputStream = XmlChunkerImplAndPopulatorTest.class.getResourceAsStream("/xml/cd_catalog.xml");

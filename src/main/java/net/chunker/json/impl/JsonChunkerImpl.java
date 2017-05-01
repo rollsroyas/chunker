@@ -118,7 +118,7 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 	}
 
 	private void ifFirstMatchThenAddBeforeMatchEventsToCurrentEvents() {
-		if (!inMatchedArray && matcher.acceptName(currentName)) {
+		if (!inMatchedArray && matcher.acceptsName(currentName)) {
 			inMatchedArray = true;
 			initializeCurrentEventsWithBeforeMatchEvents();
 		}
@@ -138,7 +138,7 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 		}
 	}
 
-	private void processCurrentEvents(final boolean lastChunk) {
+	void processCurrentEvents(final boolean lastChunk) {
 		final boolean mustProcessBeforeMatchEvents = lastChunk && !inMatchedArray;
 		if (chunkCount > 0 || mustProcessBeforeMatchEvents) {
 			if (mustProcessBeforeMatchEvents) {
@@ -275,27 +275,54 @@ public class JsonChunkerImpl<A> implements JsonChunker {
 		private Builder() {
 			chunkSize = 1;
 		}
-
+		
+		/**
+		 * @param  chunkSize
+		 * 		The max number of repeated objects in a chunk, defaults to 1.
+		 * @return this
+		 */
 		public Builder<A> chunkSize(int chunkSize) {
 			this.chunkSize = chunkSize;
 			return this;
 		}
 
+		/**
+		 * @param memoryManager
+		 * 		This optional functional interface, if present, will be invoked after every chunk
+		 * @return this
+		 */
 		public Builder<A> memoryManager(MemoryManager memoryManager) {
 			this.memoryManager = memoryManager;
 			return this;
 		}
 
+		/**
+		 * @param queue
+		 * 		This required object contains the chunks.
+		 *		Note that when the ({@link Callable}s) returns null
+		 *      then there are no more chunks to process.
+		 * @return this
+		 */
 		public Builder<A> queue(BlockingQueue<Callable<A>> queue) {
 			this.queue = queue;
 			return this;
 		}
 
+		/**
+		 * @param factory
+		 * 		This required object, creates the chunks ({@link Callable}s) that go on the queue
+		 * @return this
+		 */
 		public Builder<A> factory(JsonChunkFactory<A> factory) {
 			this.factory = factory;
 			return this;
 		}
 
+		/**
+		 * @param matcher
+		 * 		This required object, identifies the repeated objects to be chunked in a JSON array
+		 * @return this
+		 */
 		public Builder<A> matcher(JsonArrayMatcher matcher) {
 			this.matcher = matcher;
 			return this;

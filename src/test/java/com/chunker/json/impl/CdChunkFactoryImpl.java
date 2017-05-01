@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import javax.xml.bind.JAXBException;
 
 import com.chunker.model.Catalog;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +20,7 @@ public class CdChunkFactoryImpl implements JsonChunkFactory<Catalog> {
 	public CdChunkFactoryImpl() throws JAXBException {
 		mapper = new ObjectMapper();
 		mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	@Override

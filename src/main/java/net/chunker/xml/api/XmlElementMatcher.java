@@ -14,5 +14,5 @@ public interface XmlElementMatcher {
 	 * @return true if this is the repeated element to be chunked, otherwise
 	 *         false
 	 */
-	boolean acceptName(String namespaceURI, String name);
+	boolean acceptsName(String namespaceURI, String name);
 }

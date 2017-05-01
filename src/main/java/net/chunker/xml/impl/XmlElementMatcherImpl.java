@@ -22,10 +22,10 @@ public class XmlElementMatcherImpl implements XmlElementMatcher {
 	}
 
 	/**
-	 * @see XmlElementMatcher#acceptName(String, String)
+	 * @see XmlElementMatcher#acceptsName(String, String)
 	 */
 	@Override
-	public boolean acceptName(String namespaceURI, String name) {
+	public boolean acceptsName(String namespaceURI, String name) {
 		return this.name.equals(name) && (this.namespaceURI == null || this.namespaceURI.equals(namespaceURI));
 	}
 }

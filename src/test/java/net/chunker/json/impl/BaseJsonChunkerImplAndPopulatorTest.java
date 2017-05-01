@@ -52,14 +52,16 @@ public abstract class BaseJsonChunkerImplAndPopulatorTest<A> {
 		BlockingQueue<Callable<A>> queue = new ArrayBlockingQueue<Callable<A>>(100);
 		
 		JsonArrayMatcher matcher = new JsonArrayMatcherImpl(unmatched ? "UNMATCHED" : "CDS");
-		// setting these values low to force a GC
-		MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
 		Builder<A> builder = JsonChunkerImpl.<A>builder()
 			.queue(queue)
 			.factory(factory)
-			.matcher(matcher)
-			.memoryManager(memoryManager);
+			.matcher(matcher);
 		if (chunkSize != null) {
+			// Showing that memoryManager is not required
+			// Setting memoryTolerance low to force a GC, probably .8 would be a good default
+			MemoryManagerImpl memoryManager = new MemoryManagerImpl(3, 0.01);
+			builder.memoryManager(memoryManager);
+	
 			builder.chunkSize(chunkSize);
 		}
 		JsonChunker chunker = builder.build();
